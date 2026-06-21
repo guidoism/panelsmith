@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RV-8 Panel Designer</title>
+  <link rel="stylesheet" href="styles/app.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand">
+      <span class="brand-mark">RV-8</span>
+      <span class="brand-title">Panel Designer</span>
+    </div>
+    <div class="topbar-design">
+      <input id="design-name" class="design-name-input" type="text"
+             placeholder="Untitled design" autocomplete="off" spellcheck="false">
+      <span id="dirty-dot" class="dirty-dot" title="Unsaved changes" hidden>●</span>
+    </div>
+    <div class="topbar-actions">
+      <button id="btn-new" class="btn">New</button>
+      <button id="btn-save" class="btn btn-primary">Save</button>
+      <button id="btn-export-png" class="btn">Export PNG</button>
+      <div class="menu">
+        <button id="btn-more" class="btn btn-icon" title="More">⋯</button>
+        <div id="more-menu" class="menu-pop" hidden>
+          <button id="btn-export-json" class="menu-item">Export JSON…</button>
+          <button id="btn-import-json" class="menu-item">Import JSON…</button>
+          <button id="btn-duplicate-design" class="menu-item">Duplicate design</button>
+          <hr>
+          <button id="btn-delete-design" class="menu-item danger">Delete design</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="workspace">
+    <!-- Left: instrument palette -->
+    <aside id="palette" class="panel-col">
+      <div class="col-header">
+        <h2>Instruments</h2>
+        <input id="palette-search" class="search" type="search" placeholder="Search…">
+      </div>
+      <div id="palette-list" class="palette-list"><!-- populated by JS --></div>
+      <p class="palette-hint">Drag onto the panel, or click to drop at center.</p>
+    </aside>
+
+    <!-- Center: stage -->
+    <section id="stage-wrap">
+      <div id="stage-toolbar">
+        <div class="tool-group">
+          <button id="btn-zoom-out" class="btn btn-icon" title="Zoom out">−</button>
+          <button id="btn-zoom-fit" class="btn" title="Fit to panel">Fit</button>
+          <button id="btn-zoom-in" class="btn btn-icon" title="Zoom in">+</button>
+          <span id="zoom-readout" class="readout">100%</span>
+        </div>
+        <div class="tool-group">
+          <label class="toggle"><input type="checkbox" id="toggle-grid"> Grid</label>
+          <span id="hover-coords" class="readout coords">—</span>
+        </div>
+      </div>
+      <div id="stage-host"><!-- SVG stage injected here --></div>
+    </section>
+
+    <!-- Right: inspector -->
+    <aside id="inspector" class="panel-col">
+      <div class="col-header"><h2>Design</h2></div>
+
+      <div class="insp-section">
+        <label class="field-label" for="design-notes">Notes</label>
+        <textarea id="design-notes" class="notes" rows="4"
+                  placeholder="Thoughts, rationale, to-do…"></textarea>
+      </div>
+
+      <div class="insp-section" id="selection-section" hidden>
+        <label class="field-label">Selected instrument</label>
+        <div id="selection-name" class="selection-name">—</div>
+        <div class="coord-grid">
+          <label>X <input id="sel-x" type="number" step="1" class="coord-input"> mm</label>
+          <label>Y <input id="sel-y" type="number" step="1" class="coord-input"> mm</label>
+        </div>
+        <div class="sel-actions">
+          <button id="btn-front" class="btn btn-sm">Front</button>
+          <button id="btn-back" class="btn btn-sm">Back</button>
+          <button id="btn-dupe" class="btn btn-sm">Duplicate</button>
+          <button id="btn-delete-inst" class="btn btn-sm danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="insp-section grow">
+        <div class="insp-subhead">
+          <label class="field-label">Saved designs</label>
+          <span id="design-count" class="muted"></span>
+        </div>
+        <ul id="designs-list" class="designs-list"><!-- populated by JS --></ul>
+      </div>
+    </aside>
+  </main>
+
+  <input id="file-import" type="file" accept="application/json,.json" hidden>
+
+  <!-- Classic scripts (no ES modules) so the app also runs from file:// by
+       double-clicking. Load order matters: panel data and libs before app. -->
+  <script src="js/panel-data.js"></script>
+  <script src="js/instruments.js"></script>
+  <script src="js/designs.js"></script>
+  <script src="js/stage.js"></script>
+  <script src="js/placement.js"></script>
+  <script src="js/export-png.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

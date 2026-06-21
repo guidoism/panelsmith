@@ -1,0 +1,170 @@
+// Manages instrument instances placed on the stage: render, drag, select,
+// delete, duplicate, z-order. Positions are the instrument CENTRE in panel mm.
+
+(function () {
+const { CATALOG_BY_ID } = APP;
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+class Placement {
+  constructor(stage) {
+    this.stage = stage;
+    this.items = [];          // [{ uid, instId, x, y }] in z-order (last = top)
+    this.selected = null;     // uid
+    this._uidSeq = 1;
+    this.onChange = null;     // () => void  (mark dirty)
+    this.onSelect = null;     // (item|null) => void
+  }
+
+  _uid() { return 'i' + (this._uidSeq++); }
+
+  // ---- model <-> view ----------------------------------------------------
+  setItems(items) {
+    this.items = (items || []).map(it => ({
+      uid: this._uid(),
+      instId: it.instId,
+      x: it.x_mm ?? it.x ?? 0,
+      y: it.y_mm ?? it.y ?? 0,
+    }));
+    this.selected = null;
+    this._renderAll();
+    if (this.onSelect) this.onSelect(null);
+  }
+
+  serialize() {
+    return this.items.map(it => ({
+      instId: it.instId, x_mm: Math.round(it.x), y_mm: Math.round(it.y),
+    }));
+  }
+
+  _renderAll() {
+    this.stage.instLayer.replaceChildren();
+    for (const it of this.items) this.stage.instLayer.append(this._buildNode(it));
+    this._refreshSelectionClass();
+  }
+
+  _buildNode(it) {
+    const inst = CATALOG_BY_ID[it.instId];
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'instrument');
+    g.setAttribute('data-uid', it.uid);
+    g.setAttribute('transform', `translate(${it.x} ${it.y})`);
+    if (!inst) {
+      g.innerHTML = `<rect x="-20" y="-20" width="40" height="40" fill="#822" />`;
+      return g;
+    }
+    // transparent hit area covering full bounds so the whole unit is draggable
+    const hit = `<rect class="hit" x="${-inst.w/2}" y="${-inst.h/2}" width="${inst.w}" height="${inst.h}"/>`;
+    g.innerHTML = inst.svg() + hit;
+    this._wireDrag(g, it);
+    return g;
+  }
+
+  _node(uid) { return this.stage.instLayer.querySelector(`[data-uid="${uid}"]`); }
+
+  // ---- interaction -------------------------------------------------------
+  _wireDrag(g, it) {
+    let drag = null;
+    g.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.stopPropagation();               // don't let the stage start a pan
+      this.select(it.uid);
+      const start = this.stage.clientToMM(e.clientX, e.clientY);
+      drag = { sx: start.x, sy: start.y, ix: it.x, iy: it.y, moved: false };
+      g.setPointerCapture(e.pointerId);
+    });
+    g.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const p = this.stage.clientToMM(e.clientX, e.clientY);
+      it.x = Math.round(drag.ix + (p.x - drag.sx));
+      it.y = Math.round(drag.iy + (p.y - drag.sy));
+      g.setAttribute('transform', `translate(${it.x} ${it.y})`);
+      drag.moved = true;
+      if (this.onSelect) this.onSelect(it);   // live coord readout
+    });
+    const end = (e) => {
+      if (!drag) return;
+      if (drag.moved && this.onChange) this.onChange();
+      drag = null;
+      try { g.releasePointerCapture(e.pointerId); } catch {}
+    };
+    g.addEventListener('pointerup', end);
+    g.addEventListener('pointercancel', end);
+  }
+
+  // ---- commands ----------------------------------------------------------
+  add(instId, x, y) {
+    const it = { uid: this._uid(), instId, x: Math.round(x), y: Math.round(y) };
+    this.items.push(it);
+    this.stage.instLayer.append(this._buildNode(it));
+    this.select(it.uid);
+    if (this.onChange) this.onChange();
+    return it;
+  }
+
+  select(uid) {
+    this.selected = uid;
+    this._refreshSelectionClass();
+    const it = this.items.find(i => i.uid === uid) || null;
+    if (this.onSelect) this.onSelect(it);
+  }
+
+  clearSelection() {
+    this.selected = null;
+    this._refreshSelectionClass();
+    if (this.onSelect) this.onSelect(null);
+  }
+
+  _refreshSelectionClass() {
+    for (const node of this.stage.instLayer.children) {
+      node.classList.toggle('selected', node.getAttribute('data-uid') === this.selected);
+    }
+  }
+
+  _selectedItem() { return this.items.find(i => i.uid === this.selected) || null; }
+
+  deleteSelected() {
+    const it = this._selectedItem(); if (!it) return;
+    this.items = this.items.filter(i => i !== it);
+    this._node(it.uid)?.remove();
+    this.clearSelection();
+    if (this.onChange) this.onChange();
+  }
+
+  duplicateSelected() {
+    const it = this._selectedItem(); if (!it) return;
+    this.add(it.instId, it.x + 12, it.y + 12);
+  }
+
+  setSelectedPos(x, y) {
+    const it = this._selectedItem(); if (!it) return;
+    if (Number.isFinite(x)) it.x = Math.round(x);
+    if (Number.isFinite(y)) it.y = Math.round(y);
+    this._node(it.uid)?.setAttribute('transform', `translate(${it.x} ${it.y})`);
+    if (this.onChange) this.onChange();
+  }
+
+  nudgeSelected(dx, dy) {
+    const it = this._selectedItem(); if (!it) return;
+    this.setSelectedPos(it.x + dx, it.y + dy);
+    if (this.onSelect) this.onSelect(it);
+  }
+
+  bringToFront() {
+    const it = this._selectedItem(); if (!it) return;
+    this.items = this.items.filter(i => i !== it); this.items.push(it);
+    const node = this._node(it.uid); if (node) this.stage.instLayer.append(node);
+    if (this.onChange) this.onChange();
+  }
+
+  sendToBack() {
+    const it = this._selectedItem(); if (!it) return;
+    this.items = this.items.filter(i => i !== it); this.items.unshift(it);
+    const node = this._node(it.uid);
+    if (node) this.stage.instLayer.insertBefore(node, this.stage.instLayer.firstChild);
+    if (this.onChange) this.onChange();
+  }
+}
+
+APP.Placement = Placement;
+})();
