@@ -39,7 +39,8 @@ nudge · `Esc` deselect.
 - **3⅛″ rounds** (idealized, parametric SVG): Attitude, Directional Gyro, Airspeed,
   Altimeter, Vertical Speed, Turn Coordinator — ~84 mm bezels.
 - **Garmin G3X Touch glass** (real bezel sizes, faithful PFD/MFD layout in SVG): GDU 460
-  (10″, 275.5 × 198.6 mm) and GDU 470 (7″, 152.7 × 198.6 mm).
+  (10″, 275.5 × 198.6 mm), GDU 450 (7″ landscape, 198.6 × 152.7 mm), and GDU 470 (7″
+  portrait, 152.7 × 198.6 mm).
 
 ## Storage & export
 

@@ -224,6 +224,27 @@ function gdu470() {
   `;
 }
 
+// Same 7" module as the GDU 470, rotated to landscape.
+function gdu450() {
+  const w = 198.6, h = 152.7;
+  const b = g3xBezel(w, h, 8);
+  // landscape: PFD left half, map right half
+  const gap = 1;
+  const halfW = (b.screenW - gap) / 2;
+  return `
+    <rect class="sel-outline" x="${b.sx}" y="${b.sy}" width="${w}" height="${h}" rx="6"/>
+    <rect x="${b.sx}" y="${b.sy}" width="${w}" height="${h}" rx="7" fill="#16181c" stroke="#000" stroke-width="0.8"/>
+    <rect x="${b.screenX}" y="${b.screenY}" width="${b.screenW}" height="${b.screenH}" fill="#05070a"/>
+    ${pfd(b.screenX, b.screenY, halfW, b.screenH)}
+    ${mfdMap(b.screenX + halfW + gap, b.screenY, halfW, b.screenH)}
+    <circle cx="${b.sx + 15}" cy="${b.knobY}" r="8" fill="#0c0c0d" stroke="#33363c" stroke-width="0.8"/>
+    <circle cx="${b.sx + 15}" cy="${b.knobY}" r="4.5" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
+    <circle cx="${b.sx + w - 15}" cy="${b.knobY}" r="8" fill="#0c0c0d" stroke="#33363c" stroke-width="0.8"/>
+    <circle cx="${b.sx + w - 15}" cy="${b.knobY}" r="4.5" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
+    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="5" fill="#3a3d44" font-family="sans-serif" letter-spacing="1">GARMIN</text>
+  `;
+}
+
 /* -------------------------------------------------------------------------- */
 
 const CATALOG = [
@@ -233,8 +254,9 @@ const CATALOG = [
   { id: 'alt', name: 'Altimeter',          category: '3⅛″ Round', w: ROUND_BEZEL, h: ROUND_BEZEL, svg: altimeter },
   { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: ROUND_BEZEL, h: ROUND_BEZEL, svg: vsi },
   { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: ROUND_BEZEL, h: ROUND_BEZEL, svg: turn },
-  { id: 'gdu460', name: 'G3X Touch — GDU 460 (10″)', category: 'Garmin Glass', w: 275.5, h: 198.6, svg: gdu460 },
-  { id: 'gdu470', name: 'G3X Touch — GDU 470 (7″)',  category: 'Garmin Glass', w: 152.7, h: 198.6, svg: gdu470 },
+  { id: 'gdu460', name: 'G3X Touch — GDU 460 (10″)',          category: 'Garmin Glass', w: 275.5, h: 198.6, svg: gdu460 },
+  { id: 'gdu450', name: 'G3X Touch — GDU 450 (7″ landscape)', category: 'Garmin Glass', w: 198.6, h: 152.7, svg: gdu450 },
+  { id: 'gdu470', name: 'G3X Touch — GDU 470 (7″ portrait)',  category: 'Garmin Glass', w: 152.7, h: 198.6, svg: gdu470 },
 ];
 
 const CATALOG_BY_ID = Object.fromEntries(CATALOG.map(i => [i.id, i]));
