@@ -76,9 +76,15 @@ class Placement {
     g.addEventListener('pointermove', (e) => {
       if (!drag) return;
       const p = this.stage.clientToMM(e.clientX, e.clientY);
-      it.x = Math.round(drag.ix + (p.x - drag.sx));
-      it.y = Math.round(drag.iy + (p.y - drag.sy));
+      const rawX = drag.ix + (p.x - drag.sx);
+      const rawY = drag.iy + (p.y - drag.sy);
+      // Hold Alt to bypass snapping for fine free placement.
+      const snap = e.altKey ? { x: rawX, y: rawY, snappedX: false, snappedY: false, guides: [] }
+                            : this.computeSnap(it, rawX, rawY);
+      it.x = snap.snappedX ? snap.x : Math.round(rawX);
+      it.y = snap.snappedY ? snap.y : Math.round(rawY);
       g.setAttribute('transform', `translate(${it.x} ${it.y})`);
+      this.stage.showGuides(snap.guides);
       drag.moved = true;
       if (this.onSelect) this.onSelect(it);   // live coord readout
     });
@@ -86,11 +92,62 @@ class Placement {
       if (!drag) return;
       if (drag.moved && this.onChange) this.onChange();
       drag = null;
+      this.stage.clearGuides();
       try { g.releasePointerCapture(e.pointerId); } catch {}
     };
     g.addEventListener('pointerup', end);
     g.addEventListener('pointercancel', end);
   }
+
+  // Smart alignment: snap the dragged item's edges/centre to other items and
+  // the panel centre lines, returning the snapped position + guide lines to draw.
+  computeSnap(item, rawX, rawY) {
+    const inst = CATALOG_BY_ID[item.instId];
+    const hw = inst.w / 2, hh = inst.h / 2;
+    const thr = this.stage.mmPerPx() * 7;        // ~7px tolerance, zoom-independent
+    const PV = APP.PANEL_VIEWBOX;
+    const panelCx = PV.x + PV.w / 2, panelCy = PV.y + PV.h / 2;
+
+    const ax = [rawX - hw, rawX, rawX + hw];     // left, centre, right
+    const ay = [rawY - hh, rawY, rawY + hh];     // top, centre, bottom
+
+    const xt = [{ pos: panelCx, lo: PV.y, hi: PV.y + PV.h, full: true }];
+    const yt = [{ pos: panelCy, lo: PV.x, hi: PV.x + PV.w, full: true }];
+    for (const o of this.items) {
+      if (o === item) continue;
+      const oi = CATALOG_BY_ID[o.instId], ohw = oi.w / 2, ohh = oi.h / 2;
+      for (const px of [o.x - ohw, o.x, o.x + ohw]) xt.push({ pos: px, lo: o.y - ohh, hi: o.y + ohh });
+      for (const py of [o.y - ohh, o.y, o.y + ohh]) yt.push({ pos: py, lo: o.x - ohw, hi: o.x + ohw });
+    }
+
+    const best = (anchors, targets) => {
+      let b = null;
+      for (const t of targets) for (const a of anchors) {
+        const d = t.pos - a;
+        if (Math.abs(d) <= thr && (!b || Math.abs(d) < Math.abs(b.delta))) b = { delta: d, target: t };
+      }
+      return b;
+    };
+
+    const bx = best(ax, xt), by = best(ay, yt);
+    const x = bx ? rawX + bx.delta : rawX;
+    const y = by ? rawY + by.delta : rawY;
+
+    const guides = [];
+    if (bx) {
+      const lo = bx.target.full ? bx.target.lo : Math.min(bx.target.lo, y - hh);
+      const hi = bx.target.full ? bx.target.hi : Math.max(bx.target.hi, y + hh);
+      guides.push({ x1: bx.target.pos, y1: lo, x2: bx.target.pos, y2: hi });
+    }
+    if (by) {
+      const lo = by.target.full ? by.target.lo : Math.min(by.target.lo, x - hw);
+      const hi = by.target.full ? by.target.hi : Math.max(by.target.hi, x + hw);
+      guides.push({ x1: lo, y1: by.target.pos, x2: hi, y2: by.target.pos });
+    }
+    return { x, y, snappedX: !!bx, snappedY: !!by, guides };
+  }
+
+  refresh() { this._renderAll(); }
 
   // ---- commands ----------------------------------------------------------
   add(instId, x, y) {

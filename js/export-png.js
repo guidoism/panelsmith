@@ -14,6 +14,7 @@ const EXPORT_CSS = `
   .sel-outline { fill: none; stroke: none; }
   .hit { fill: none; }
   .grid-lines { display: none; }
+  .align-guides { display: none; }
 `;
 
 async function exportPNG(stage, name) {

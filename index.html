@@ -72,6 +72,30 @@
                   placeholder="Thoughts, rationale, to-do…"></textarea>
       </div>
 
+      <div class="insp-section" id="vspeed-section">
+        <div class="insp-subhead">
+          <label class="field-label">Airspeed V-speeds</label>
+          <select id="vs-unit" class="mini-select" title="Units / preset">
+            <option value="mph">mph</option>
+            <option value="kt">kt</option>
+          </select>
+        </div>
+        <div class="vs-grid">
+          <label>V<sub>S0</sub><input id="vs-vs0" type="number" class="coord-input"></label>
+          <label>V<sub>FE</sub><input id="vs-vfe" type="number" class="coord-input"></label>
+          <label>V<sub>S1</sub><input id="vs-vs1" type="number" class="coord-input"></label>
+          <label>V<sub>NO</sub><input id="vs-vno" type="number" class="coord-input"></label>
+          <label>V<sub>NE</sub><input id="vs-vne" type="number" class="coord-input"></label>
+          <label>Max<input id="vs-max" type="number" class="coord-input"></label>
+        </div>
+        <p class="vs-hint">
+          <b style="color:#eef">White</b> V<sub>S0</sub>–V<sub>FE</sub> ·
+          <b style="color:#36c46a">Green</b> V<sub>S1</sub>–V<sub>NO</sub> ·
+          <b style="color:#e7c93b">Yellow</b> V<sub>NO</sub>–V<sub>NE</sub> ·
+          <b style="color:#ff5c5c">Red</b> V<sub>NE</sub>
+        </p>
+      </div>
+
       <div class="insp-section" id="selection-section" hidden>
         <label class="field-label">Selected instrument</label>
         <div id="selection-name" class="selection-name">—</div>

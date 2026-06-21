@@ -18,6 +18,7 @@ function blankDesign(name = 'Untitled design') {
     schema: SCHEMA, aircraft: 'RV-8',
     id: uid(), name, notes: '',
     createdAt: now, updatedAt: now,
+    vspeeds: APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.mph } : undefined,
     instruments: [],
   };
 }
@@ -72,6 +73,7 @@ class DesignRepo {
       name: (obj.name || 'Imported design') + (this.get(obj.id) ? '' : ''),
       notes: obj.notes || '',
       createdAt: obj.createdAt || now, updatedAt: now,
+      vspeeds: obj.vspeeds || (APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.mph } : undefined),
       instruments: obj.instruments.map(it => ({
         instId: it.instId,
         x_mm: Number(it.x_mm ?? it.x ?? 0),

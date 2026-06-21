@@ -13,8 +13,6 @@ let stage, placement;
 let current = null;     // active design object
 let dirty = false;
 
-init();
-
 async function init() {
   stage = new Stage($('#stage-host'));
   placement = new Placement(stage);
@@ -29,9 +27,11 @@ async function init() {
 
   wireStage();
   wirePlacement();
+  wirePalette();
   buildPalette();
   wireTopbar();
   wireInspector();
+  wireVspeeds();
   wireToolbar();
   wireKeyboard();
 
@@ -81,20 +81,25 @@ function buildPalette() {
     }</div>`;
     host.append(wrap);
   }
+  applyPaletteFilter();
+}
 
+// Delegated palette listeners — wired once, survive buildPalette() re-renders.
+function wirePalette() {
+  const host = $('#palette-list');
   host.addEventListener('pointerdown', (e) => {
     const item = e.target.closest('.palette-item');
     if (!item || e.button !== 0) return;
     startPaletteDrag(CATALOG_BY_ID[item.dataset.id], e);
   });
+  $('#palette-search').addEventListener('input', applyPaletteFilter);
+}
 
-  // search filter
-  $('#palette-search').addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    host.querySelectorAll('.palette-item').forEach(el => {
-      const inst = CATALOG_BY_ID[el.dataset.id];
-      el.style.display = inst.name.toLowerCase().includes(q) ? '' : 'none';
-    });
+function applyPaletteFilter() {
+  const q = $('#palette-search').value.trim().toLowerCase();
+  $('#palette-list').querySelectorAll('.palette-item').forEach(el => {
+    const inst = CATALOG_BY_ID[el.dataset.id];
+    el.style.display = inst.name.toLowerCase().includes(q) ? '' : 'none';
   });
 }
 
@@ -190,6 +195,42 @@ function renderSelection(it) {
   $('#sel-y').value = Math.round(it.y);
 }
 
+/* ------------------------------- V-speeds -------------------------------- */
+const VS_FIELDS = { vs0: '#vs-vs0', vfe: '#vs-vfe', vs1: '#vs-vs1', vno: '#vs-vno', vne: '#vs-vne', scaleMax: '#vs-max' };
+
+function wireVspeeds() {
+  for (const sel of Object.values(VS_FIELDS)) $(sel).addEventListener('input', onVspeedInput);
+  $('#vs-unit').addEventListener('change', () => {
+    const preset = APP.ASI_PRESETS[$('#vs-unit').value] || APP.ASI_PRESETS.mph;
+    current.vspeeds = { ...preset };
+    fillVspeedsUI(current.vspeeds);
+    applyVspeeds(current.vspeeds);
+    markDirty(true);
+  });
+}
+
+function onVspeedInput() {
+  const vs = current.vspeeds;
+  for (const [k, sel] of Object.entries(VS_FIELDS)) {
+    const v = parseFloat($(sel).value);
+    if (Number.isFinite(v)) vs[k] = v;
+  }
+  applyVspeeds(vs);
+  markDirty(true);
+}
+
+function fillVspeedsUI(vs) {
+  $('#vs-unit').value = (vs.unit === 'KNOTS' || vs.unit === 'kt') ? 'kt' : 'mph';
+  for (const [k, sel] of Object.entries(VS_FIELDS)) $(sel).value = vs[k];
+}
+
+// Push V-speeds into the ASI renderer and refresh anything showing one.
+function applyVspeeds(vs) {
+  APP.setASIConfig(vs);
+  buildPalette();        // ASI thumbnail
+  placement.refresh();   // placed ASIs
+}
+
 /* -------------------------------- toolbar -------------------------------- */
 function wireToolbar() {
   $('#btn-zoom-in').addEventListener('click', () => stage.zoomCenter(1.25));
@@ -232,8 +273,12 @@ function bootDesign() {
 }
 
 function applyDesign(d) {
+  d.vspeeds = d.vspeeds || { ...APP.ASI_PRESETS.mph };
   $('#design-name').value = d.name;
   $('#design-notes').value = d.notes || '';
+  fillVspeedsUI(d.vspeeds);
+  APP.setASIConfig(d.vspeeds);   // before instruments render
+  buildPalette();                // ASI thumbnail reflects this design
   placement.setItems(d.instruments);
   markDirty(false);
 }
@@ -371,4 +416,7 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
 }
+
+// Kick everything off (after all declarations above are initialized).
+init();
 })();

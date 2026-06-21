@@ -23,6 +23,10 @@ class Stage {
     svg.setAttribute('xmlns', SVGNS);
     this.svg = svg;
 
+    // Shared instrument gradient/filter defs, injected once.
+    const defs = document.createElementNS(SVGNS, 'defs');
+    defs.innerHTML = (typeof APP !== 'undefined' && APP.INSTRUMENT_DEFS) || '';
+
     this.gridLayer = document.createElementNS(SVGNS, 'g');
     this.gridLayer.setAttribute('class', 'grid-lines');
     this.gridLayer.style.display = 'none';
@@ -33,7 +37,10 @@ class Stage {
     this.instLayer = document.createElementNS(SVGNS, 'g');
     this.instLayer.setAttribute('class', 'instruments-layer');
 
-    svg.append(this.gridLayer, this.panelLayer, this.instLayer);
+    this.guideLayer = document.createElementNS(SVGNS, 'g');
+    this.guideLayer.setAttribute('class', 'align-guides');
+
+    svg.append(defs, this.gridLayer, this.panelLayer, this.instLayer, this.guideLayer);
     this.host.append(svg);
     this._applyViewBox();
     this._wirePanZoom();
@@ -62,6 +69,16 @@ class Stage {
     const rect = this.host.getBoundingClientRect();
     return (rect.width / this.vb.w) / (rect.width / PANEL_VIEWBOX.w) * 100;
   }
+
+  // mm represented by one screen pixel at the current zoom.
+  mmPerPx() { return this.vb.w / (this.host.clientWidth || 1); }
+
+  // Draw alignment guide lines (array of {x1,y1,x2,y2} in mm). Empty = clear.
+  showGuides(lines) {
+    this.guideLayer.innerHTML = (lines || [])
+      .map(l => `<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"/>`).join('');
+  }
+  clearGuides() { this.guideLayer.innerHTML = ''; }
 
   fit(pad = 1.06) {
     const rect = this.host.getBoundingClientRect();

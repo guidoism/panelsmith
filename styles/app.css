@@ -217,6 +217,7 @@ body { display: flex; flex-direction: column; }
 .sel-outline { fill: none; stroke: none; }
 .grid-lines line { stroke: #ffffff; stroke-opacity: .05; vector-effect: non-scaling-stroke; }
 .grid-lines .major { stroke-opacity: .1; }
+.align-guides line { stroke: #ff2e88; stroke-width: 1; vector-effect: non-scaling-stroke; pointer-events: none; }
 
 /* ---------- Inspector ---------- */
 .insp-section { padding: 12px 14px; border-bottom: 1px solid var(--line-soft); }
@@ -224,6 +225,16 @@ body { display: flex; flex-direction: column; }
 .field-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-mute); margin-bottom: 6px; }
 .insp-subhead { display: flex; justify-content: space-between; align-items: baseline; }
 .muted { color: var(--text-mute); font-size: 10px; }
+
+.mini-select {
+  background: var(--bg); color: var(--text); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); font-size: 11px; padding: 2px 4px;
+}
+.vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+.vs-grid label { font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+.vs-grid .coord-input { width: 100%; }
+.vs-grid sub { color: var(--text-mute); }
+.vs-hint { margin: 9px 0 0; font-size: 9.5px; color: var(--text-mute); line-height: 1.5; }
 
 .selection-name { font-weight: 600; margin-bottom: 8px; color: var(--text); }
 .coord-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }

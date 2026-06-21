@@ -28,19 +28,32 @@ drawn at its true mm size, which means scale is correct against the panel by con
 - **Stage** — pan (drag empty space / middle-drag / space-drag), zoom (wheel or the
   toolbar), optional 50 mm grid. Select an instrument to drag it; arrow keys nudge (Shift
   = 10 mm).
-- **Right inspector** — design name + notes, selected-instrument X/Y and
-  front/back/duplicate/delete, and the list of saved designs.
+- **Smart alignment guides** — while dragging, an instrument's edges and centre snap to
+  other instruments and to the panel centreline (~7 px tolerance), drawing magenta guide
+  lines. Hold **Alt** to bypass snapping for free placement.
+- **Right inspector** — design name + notes, editable **V-speeds** (see below),
+  selected-instrument X/Y and front/back/duplicate/delete, and the list of saved designs.
 
 Shortcuts: `⌘/Ctrl+S` save · `⌘/Ctrl+D` duplicate · `Delete`/`Backspace` remove · arrows
-nudge · `Esc` deselect.
+nudge · `Alt`-drag free placement · `Esc` deselect.
 
 ## Instruments
 
-- **3⅛″ rounds** (idealized, parametric SVG): Attitude, Directional Gyro, Airspeed,
-  Altimeter, Vertical Speed, Turn Coordinator — ~84 mm bezels.
+- **3⅛″ rounds** (idealized, detailed parametric SVG with cast bezel, corner screws, and
+  glass reflection): Attitude (sky/ground, pitch ladder, OFF flag), Directional Gyro,
+  Airspeed, Altimeter (three-pointer + Kollsman window), Vertical Speed, Turn Coordinator.
 - **Garmin G3X Touch glass** (real bezel sizes, faithful PFD/MFD layout in SVG): GDU 460
   (10″, 275.5 × 198.6 mm), GDU 450 (7″ landscape, 198.6 × 152.7 mm), and GDU 470 (7″
   portrait, 152.7 × 198.6 mm).
+
+## Airspeed V-speeds
+
+The ASI colour arcs are driven by the design's V-speeds, defaulting to Van's published
+**RV-8** markings (statute mph): white arc V<sub>S0</sub> 58 → V<sub>FE</sub> 100, green
+V<sub>S1</sub> 64 → V<sub>NO</sub> 142, yellow V<sub>NO</sub> 142 → V<sub>NE</sub> 230,
+red line at V<sub>NE</sub> 230. Edit them (and the scale max) in the inspector, or pick
+the **kt** preset (V<sub>NE</sub> 200, etc.). V-speeds are stored per design, so each
+aircraft keeps its own.
 
 ## Storage & export
 
