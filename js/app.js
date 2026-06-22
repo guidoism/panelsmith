@@ -195,6 +195,8 @@ function wireInspector() {
   }
   busSel.addEventListener('change', (e) => placement.setSelectedBus(e.target.value));
 
+  $('#sel-text').addEventListener('input', (e) => placement.setSelectedText(e.target.value));
+
   $('#sel-x').addEventListener('change', (e) =>
     placement.setSelectedPos(parseFloat(e.target.value), NaN));
   $('#sel-y').addEventListener('change', (e) =>
@@ -212,6 +214,13 @@ function renderSelection(it) {
   sec.hidden = false;
   const inst = CATALOG_BY_ID[it.instId];
   $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb · ${inst.amps} A` : it.instId;
+
+  // Editable label text — only for instruments that declare a default `text`.
+  const editable = inst && inst.text !== undefined;
+  $('#sel-text').hidden = !editable;
+  $('#sel-text-label').hidden = !editable;
+  if (editable) $('#sel-text').value = it.text ?? inst.text;
+
   $('#sel-bus').value = it.bus || 'main';
   $('#sel-x').value = Math.round(it.x);
   $('#sel-y').value = Math.round(it.y);

@@ -26,6 +26,7 @@ class Placement {
       x: it.x_mm ?? it.x ?? 0,
       y: it.y_mm ?? it.y ?? 0,
       bus: it.bus || 'main',
+      text: it.text,
     }));
     this.selected = null;
     this._renderAll();
@@ -35,6 +36,7 @@ class Placement {
   serialize() {
     return this.items.map(it => ({
       instId: it.instId, x_mm: Math.round(it.x), y_mm: Math.round(it.y), bus: it.bus || 'main',
+      ...(it.text !== undefined ? { text: it.text } : {}),
     }));
   }
 
@@ -56,7 +58,7 @@ class Placement {
     }
     // transparent hit area covering full bounds so the whole unit is draggable
     const hit = `<rect class="hit" x="${-inst.w/2}" y="${-inst.h/2}" width="${inst.w}" height="${inst.h}"/>`;
-    g.innerHTML = inst.svg() + hit;
+    g.innerHTML = inst.svg(it.text) + hit;
     this._wireDrag(g, it);
     return g;
   }
@@ -191,13 +193,27 @@ class Placement {
 
   duplicateSelected() {
     const it = this._selectedItem(); if (!it) return;
-    this.add(it.instId, it.x + 12, it.y + 12, it.bus);
+    const copy = this.add(it.instId, it.x + 12, it.y + 12, it.bus);
+    if (it.text !== undefined) { copy.text = it.text; this._rebuildNode(copy); }
   }
 
   setSelectedBus(bus) {
     const it = this._selectedItem(); if (!it) return;
     it.bus = bus;
     if (this.onChange) this.onChange();
+  }
+
+  // Update editable label text on the selected item and re-render its node.
+  setSelectedText(text) {
+    const it = this._selectedItem(); if (!it) return;
+    it.text = text;
+    this._rebuildNode(it);
+    if (this.onChange) this.onChange();
+  }
+
+  _rebuildNode(it) {
+    const old = this._node(it.uid);
+    if (old) { old.replaceWith(this._buildNode(it)); this._refreshSelectionClass(); }
   }
 
   setSelectedPos(x, y) {

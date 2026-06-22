@@ -23,9 +23,11 @@ Instruments live in `js/instruments.js` as entries in the `CATALOG` array:
   category: 'Electronic Flight Instruments',
   w: 86, h: 91,             // TRUE size in millimetres
   weight: 0.83,             // pounds
-  svg: g5,                  // () => string of inner <g> markup
+  amps: 0.25,               // typical current draw at 12 V nominal (0 if it draws none)
+  svg: g5,                  // (text?) => string of inner <g> markup
   link: 'https://…',        // optional — real, buyable products only
-  vendor: 'Aircraft Spruce' // optional — shown with the link
+  vendor: 'Aircraft Spruce',// optional — shown with the link
+  text: 'LABEL'             // optional — default for an editable-text item (placards/labels)
 }
 ```
 

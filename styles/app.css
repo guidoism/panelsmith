@@ -257,6 +257,7 @@ body { display: flex; flex-direction: column; }
 .bus-row .b-load { color: var(--text); white-space: nowrap; font-size: 11px; }
 .bus-hint { margin: 9px 0 0; font-size: 9.5px; color: var(--text-mute); line-height: 1.5; }
 .bus-select { width: 100%; margin-bottom: 8px; }
+.sel-text-input { width: 100%; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.3px; }
 
 .selection-name { font-weight: 600; margin-bottom: 4px; color: var(--text); }
 .buy-link {

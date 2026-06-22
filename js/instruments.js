@@ -668,6 +668,9 @@ function selRect(w, h, rx = 2) {
   return `<rect class="sel-outline" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${rx}"/>`;
 }
 
+// Escape user-supplied label text before it goes into SVG markup.
+const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
 // Toggle (bat-handle) switch.
 function toggleSwitch() {
   return `<g>${selRect(13, 20)}
@@ -786,21 +789,31 @@ function annunciator() {
   return `<g>${selRect(w, h)}<rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="2" fill="#15171a" stroke="#000" stroke-width="0.6"/>${cells}</g>`;
 }
 
-// N-number placard (placeholder text — per-instance editable labels are a
-// planned follow-up).
-function nNumberPlacard() {
-  const w = 70, h = 16;
+// N-number placard — editable text (default shown).
+function nNumberPlacard(text = 'N1234') {
+  const w = 70, h = 16, t = String(text);
+  const fs = Math.max(4, Math.min(9, (w - 8) / (t.length * 0.66 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#0c0d0f" stroke="#3a3d42" stroke-width="0.4"/>
-    <text x="0" y="3.4" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="2">N1234</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="2">${esc(t)}</text></g>`;
 }
 
-// Generic warning placard.
+// Warning / instruction placard — editable text.
 function placard(text = 'EXPERIMENTAL') {
-  const w = 56, h = 12;
+  const w = 56, h = 12, t = String(text);
+  const fs = Math.max(3, Math.min(5.2, (w - 5) / (t.length * 0.6 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.2" fill="#b02a2a" stroke="#5a1416" stroke-width="0.4"/>
-    <text x="0" y="2.4" text-anchor="middle" font-size="5.2" fill="#fff" font-family="Arial" font-weight="bold" letter-spacing="0.6">${text}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#fff" font-family="Arial" font-weight="bold" letter-spacing="0.6">${esc(t)}</text></g>`;
+}
+
+// Generic engraved label strip — editable text, for annotating switches/breakers.
+function labelStrip(text = 'LABEL') {
+  const w = 48, h = 11, t = String(text);
+  const fs = Math.max(3, Math.min(5.5, (w - 5) / (t.length * 0.62 || 1)));
+  return `<g>${selRect(w, h, 1.5)}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#16181c" stroke="#2a2c30" stroke-width="0.4"/>
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="0.4">${esc(t)}</text></g>`;
 }
 
 const swToggle = () => toggleSwitch();
@@ -815,8 +828,9 @@ const vent     = () => eyeballVent();
 const ctlHeat  = () => cableControl('#b02a2a');
 const ctlAir   = () => cableControl('#1a1c1f');
 const annun    = () => annunciator();
-const placardN = () => nNumberPlacard();
-const placardX = () => placard('EXPERIMENTAL');
+const placardN = (t) => nNumberPlacard(t);
+const placardX = (t) => placard(t);
+const labelTag = (t) => labelStrip(t);
 
 /* ----------------------------------------------------------------------------
  * Engine & fuel monitoring
@@ -1121,10 +1135,11 @@ const CATALOG = [
   { id: 'ctl-heat',  name: 'Cabin heat control',     category: 'Vents & Air', w: 20, h: 20, weight: 0.1,  amps: 0, svg: ctlHeat },
   { id: 'ctl-air',   name: 'Cabin air control',      category: 'Vents & Air', w: 20, h: 20, weight: 0.1,  amps: 0, svg: ctlAir },
 
-  // Placards & lights (generic)
+  // Placards & lights (generic; placards/label carry editable `text`)
   { id: 'annun',     name: 'Annunciator cluster',    category: 'Placards & Lights', w: 64, h: 16, weight: 0.15, amps: 0.1, svg: annun },
-  { id: 'placard-n', name: 'N-number placard',       category: 'Placards & Lights', w: 70, h: 16, weight: 0.02, amps: 0,   svg: placardN },
-  { id: 'placard-x', name: 'Experimental placard',   category: 'Placards & Lights', w: 56, h: 12, weight: 0.02, amps: 0,   svg: placardX },
+  { id: 'label',     name: 'Label (custom text)',    category: 'Placards & Lights', w: 48, h: 11, weight: 0.02, amps: 0,   svg: labelTag, text: 'LABEL' },
+  { id: 'placard-n', name: 'N-number placard',       category: 'Placards & Lights', w: 70, h: 16, weight: 0.02, amps: 0,   svg: placardN, text: 'N1234' },
+  { id: 'placard-x', name: 'Experimental placard',   category: 'Placards & Lights', w: 56, h: 12, weight: 0.02, amps: 0,   svg: placardX, text: 'EXPERIMENTAL' },
 
   // Glass displays (all real)
   { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  amps: 1.8, svg: gdu460, link: L.g3x, vendor: SPRUCE },

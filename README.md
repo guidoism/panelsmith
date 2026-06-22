@@ -96,8 +96,9 @@ alongside the larger GTN touchscreens.
 
 The panel also includes the **generic furniture** every real panel has: toggle / rocker /
 master-alt / magneto switches, a starter button, circuit breakers, a dimmer knob, USB
-ports, eyeball air vents, cabin heat/air controls, an annunciator cluster, and N-number /
-experimental placards. (Per-instance editable label text is a planned follow-up.)
+ports, eyeball air vents, cabin heat/air controls, an annunciator cluster, and a custom
+**Label**, **N-number**, and **experimental** placard. Select a label or placard and type
+your own text in the inspector — handy for annotating switches and breakers.
 
 Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 V nominal
 — pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for
