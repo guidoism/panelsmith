@@ -107,7 +107,7 @@ function applyPaletteFilter() {
 function fmtDims(inst) {
   const mm = (n) => Math.round(n);
   const size = inst.w === inst.h ? `Ø ${mm(inst.w)} mm` : `${mm(inst.w)}×${mm(inst.h)} mm`;
-  return `${size} · ${inst.weight} lb`;
+  return `${size} · ${inst.weight} lb · ${inst.amps} A`;
 }
 
 function startPaletteDrag(inst, e) {
@@ -191,7 +191,7 @@ function renderSelection(it) {
   if (!it) { sec.hidden = true; return; }
   sec.hidden = false;
   const inst = CATALOG_BY_ID[it.instId];
-  $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb` : it.instId;
+  $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb · ${inst.amps} A` : it.instId;
   $('#sel-x').value = Math.round(it.x);
   $('#sel-y').value = Math.round(it.y);
 
@@ -205,12 +205,13 @@ function renderSelection(it) {
   }
 }
 
-// Running tally of placed-instrument count and total weight.
+// Running tally of placed-instrument count, total weight, and electrical load.
 function updateSummary() {
   const items = placement.items;
   const w = items.reduce((s, it) => s + (CATALOG_BY_ID[it.instId]?.weight || 0), 0);
+  const a = items.reduce((s, it) => s + (CATALOG_BY_ID[it.instId]?.amps || 0), 0);
   $('#panel-summary').textContent =
-    `${items.length} item${items.length === 1 ? '' : 's'} · ≈ ${w.toFixed(1)} lb`;
+    `${items.length} item${items.length === 1 ? '' : 's'} · ≈ ${w.toFixed(1)} lb · ≈ ${a.toFixed(1)} A @ 12 V`;
 }
 
 /* ------------------------------- V-speeds -------------------------------- */

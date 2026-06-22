@@ -647,37 +647,39 @@ const L = {
 
 /* -------------------------------------------------------------------------- */
 
-// weight is in pounds. For the idealized instruments these are representative
-// averages (real units vary by make/model); real units list make/model + a link.
+// weight is in pounds. amps is the typical current draw at 12 V nominal (for a
+// running electrical-load tally) — pneumatic gauges draw 0; lighting excluded.
+// For the idealized instruments weight/amps are representative averages (real
+// units vary by make/model); real units list make/model + a link.
 const CATALOG = [
-  { id: 'ai',  name: 'Attitude Indicator', category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.6, svg: attitude },
-  { id: 'dg',  name: 'Directional Gyro',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.8, svg: dg },
-  { id: 'asi', name: 'Airspeed',           category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.6, svg: airspeed },
-  { id: 'alt', name: 'Altimeter',          category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.8, svg: altimeter },
-  { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.7, svg: vsi },
-  { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.2, svg: turn },
-  { id: 'lri',       name: 'Lift Reserve Indicator (2¼″)',  category: 'AoA / Lift', w: 57, h: 57, weight: 0.5, svg: lri },
-  { id: 'aoaeagle',  name: 'AoA — Alpha Systems Eagle',      category: 'AoA / Lift', w: 38, h: 66, weight: 0.3, svg: aoaEagle, link: L.eagle, vendor: SPRUCE },
-  { id: 'aoaladder', name: 'AoA — LED ladder (generic)',     category: 'AoA / Lift', w: 32, h: 64, weight: 0.3, svg: aoaLadder },
+  { id: 'ai',  name: 'Attitude Indicator', category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.6, amps: 0.5, svg: attitude },
+  { id: 'dg',  name: 'Directional Gyro',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.8, amps: 0.5, svg: dg },
+  { id: 'asi', name: 'Airspeed',           category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.6, amps: 0,   svg: airspeed },
+  { id: 'alt', name: 'Altimeter',          category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.8, amps: 0,   svg: altimeter },
+  { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.7, amps: 0,   svg: vsi },
+  { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.2, amps: 0.3, svg: turn },
+  { id: 'lri',       name: 'Lift Reserve Indicator (2¼″)',  category: 'AoA / Lift', w: 57, h: 57, weight: 0.5, amps: 0,   svg: lri },
+  { id: 'aoaeagle',  name: 'AoA — Alpha Systems Eagle',      category: 'AoA / Lift', w: 38, h: 66, weight: 0.3, amps: 0.1, svg: aoaEagle, link: L.eagle, vendor: SPRUCE },
+  { id: 'aoaladder', name: 'AoA — LED ladder (generic)',     category: 'AoA / Lift', w: 32, h: 64, weight: 0.3, amps: 0.1, svg: aoaLadder },
 
   // Real electronic flight instruments (3⅛″ replacements)
-  { id: 'g5',    name: 'Garmin G5',            category: 'Electronic Flight Instruments', w: 86, h: 91, weight: 0.83, svg: g5,    link: L.g5,    vendor: SPRUCE },
-  { id: 'gi275', name: 'Garmin GI 275',        category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.85, svg: gi275, link: L.gi275, vendor: SPRUCE },
-  { id: 'av30',  name: 'uAvionix AV-30-E',     category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.5,  svg: av30,  link: L.av30,  vendor: SPRUCE },
+  { id: 'g5',    name: 'Garmin G5',            category: 'Electronic Flight Instruments', w: 86, h: 91, weight: 0.83, amps: 0.25, svg: g5,    link: L.g5,    vendor: SPRUCE },
+  { id: 'gi275', name: 'Garmin GI 275',        category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.85, amps: 0.6,  svg: gi275, link: L.gi275, vendor: SPRUCE },
+  { id: 'av30',  name: 'uAvionix AV-30-E',     category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.5,  amps: 0.2,  svg: av30,  link: L.av30,  vendor: SPRUCE },
 
   // Real nav / comm / transponder / audio (6.25″ standard width)
-  { id: 'gtn750', name: 'Garmin GTN 750Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 152, weight: 5.5, svg: gtn750, link: L.gtn750, vendor: SPRUCE },
-  { id: 'gtn650', name: 'Garmin GTN 650Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 67,  weight: 3.0, svg: gtn650, link: L.gtn650, vendor: SPRUCE },
-  { id: 'gtr205', name: 'Garmin GTR 205 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.5, svg: gtr205, link: L.gtr205, vendor: SPRUCE },
-  { id: 'gtx335', name: 'Garmin GTX 335 (XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 1.7, svg: gtx335, link: L.gtx335, vendor: SPRUCE },
-  { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, svg: gma245, link: L.gma245, vendor: 'Garmin' },
+  { id: 'gtn750', name: 'Garmin GTN 750Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 152, weight: 5.5, amps: 3.0, svg: gtn750, link: L.gtn750, vendor: SPRUCE },
+  { id: 'gtn650', name: 'Garmin GTN 650Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 67,  weight: 3.0, amps: 1.5, svg: gtn650, link: L.gtn650, vendor: SPRUCE },
+  { id: 'gtr205', name: 'Garmin GTR 205 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.5, amps: 1.5, svg: gtr205, link: L.gtr205, vendor: SPRUCE },
+  { id: 'gtx335', name: 'Garmin GTX 335 (XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 1.7, amps: 0.5, svg: gtx335, link: L.gtx335, vendor: SPRUCE },
+  { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, amps: 0.3, svg: gma245, link: L.gma245, vendor: 'Garmin' },
 
   // Glass displays (all real)
-  { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  svg: gdu460, link: L.g3x, vendor: SPRUCE },
-  { id: 'gdu450', name: 'Garmin G3X — GDU 450 (7″ landscape)', category: 'Glass Displays', w: 198.6, h: 152.7, weight: 2.69, svg: gdu450, link: L.g3x, vendor: SPRUCE },
-  { id: 'gdu470', name: 'Garmin G3X — GDU 470 (7″ portrait)',  category: 'Glass Displays', w: 152.7, h: 198.6, weight: 2.66, svg: gdu470, link: L.g3x, vendor: SPRUCE },
-  { id: 'hdx1100', name: 'Dynon SkyView HDX (10″)',            category: 'Glass Displays', w: 264, h: 172, weight: 3.6, svg: dynonHDX1100, link: L.hdx, vendor: SPRUCE },
-  { id: 'hdx800',  name: 'Dynon SkyView HDX (7″)',             category: 'Glass Displays', w: 194, h: 142, weight: 2.0, svg: dynonHDX800,  link: L.hdx, vendor: SPRUCE },
+  { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  amps: 1.8, svg: gdu460, link: L.g3x, vendor: SPRUCE },
+  { id: 'gdu450', name: 'Garmin G3X — GDU 450 (7″ landscape)', category: 'Glass Displays', w: 198.6, h: 152.7, weight: 2.69, amps: 1.3, svg: gdu450, link: L.g3x, vendor: SPRUCE },
+  { id: 'gdu470', name: 'Garmin G3X — GDU 470 (7″ portrait)',  category: 'Glass Displays', w: 152.7, h: 198.6, weight: 2.66, amps: 1.3, svg: gdu470, link: L.g3x, vendor: SPRUCE },
+  { id: 'hdx1100', name: 'Dynon SkyView HDX (10″)',            category: 'Glass Displays', w: 264, h: 172, weight: 3.6, amps: 2.0, svg: dynonHDX1100, link: L.hdx, vendor: SPRUCE },
+  { id: 'hdx800',  name: 'Dynon SkyView HDX (7″)',             category: 'Glass Displays', w: 194, h: 142, weight: 2.0, amps: 1.4, svg: dynonHDX800,  link: L.hdx, vendor: SPRUCE },
 ];
 
 const CATALOG_BY_ID = Object.fromEntries(CATALOG.map(i => [i.id, i]));

@@ -83,9 +83,11 @@ palette):
   (transponder), GMA 245 (audio) — at the real 6.25″ stack width.
 - **Glass Displays**: Garmin G3X (GDU 460 / 450 / 470) and Dynon SkyView HDX (10″ / 7″).
 
-Each item carries a **weight** (lb) — manufacturers' published figures for the real units,
-representative averages for the idealized ones. The inspector shows a live **item count +
-total weight** for the panel; per-item weights appear in the palette and on the selection.
+Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 V nominal
+— pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for
+the real units, representative averages for the idealized ones. The inspector shows a live
+**item count + total weight + total amps** for the panel; per-item figures appear in the
+palette and on the selection.
 
 ## Airspeed V-speeds
 
