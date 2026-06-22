@@ -818,6 +818,203 @@ const annun    = () => annunciator();
 const placardN = () => nNumberPlacard();
 const placardX = () => placard('EXPERIMENTAL');
 
+/* ----------------------------------------------------------------------------
+ * Engine & fuel monitoring
+ * -------------------------------------------------------------------------- */
+
+// Generic round manifold-pressure gauge (3⅛″).
+function manifold() {
+  const a0 = 40, sweep = 260, ang = v => a0 + (v - 10) / (35 - 10) * sweep;
+  const ticks = [], nums = [];
+  for (let v = 10; v <= 35; v += 1) {
+    const major = v % 5 === 0, a = ang(v);
+    const [x1, y1] = pol(37, a), [x2, y2] = pol(major ? 31 : 34, a);
+    ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
+    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="Arial" font-weight="bold">${v}</text>`); }
+  }
+  return `<g>${bezel()}
+    <path d="${arc(28, ang(15), ang(30))}" fill="none" stroke="#1faa4b" stroke-width="2.4"/>
+    ${ticks.join('')}${nums.join('')}
+    ${title('MAN PRESS', -13, 4)}${title('IN Hg', 16, 3.4)}
+    <g transform="rotate(${ang(25)})"><path d="M -1 3 L -0.5 -30 L 0.5 -30 L 1 3 Z" fill="#f4f6f8"/></g>
+    ${hub(2.4)}${glass()}</g>`;
+}
+
+// Generic round tachometer (3⅛″) with hour readout.
+function tachometer() {
+  const a0 = 40, sweep = 260, ang = v => a0 + v / 35 * sweep; // 0..3500 rpm (×100)
+  const ticks = [], nums = [];
+  for (let v = 0; v <= 35; v += 1) {
+    const major = v % 5 === 0, a = ang(v);
+    const [x1, y1] = pol(37, a), [x2, y2] = pol(major ? 31 : 34, a);
+    ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
+    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="Arial" font-weight="bold">${v/10}</text>`); }
+  }
+  const [rx0, ry0] = pol(31, ang(27)), [rx1, ry1] = pol(37, ang(27));
+  return `<g>${bezel()}
+    <path d="${arc(28, ang(20), ang(27))}" fill="none" stroke="#1faa4b" stroke-width="2.4"/>
+    <line x1="${rx0}" y1="${ry0}" x2="${rx1}" y2="${ry1}" stroke="#e02424" stroke-width="1.6"/>
+    ${ticks.join('')}${nums.join('')}
+    ${title('RPM', -13, 4.2)}${title('× 100', 11, 3)}
+    <g transform="translate(0 17)"><rect x="-10" y="-3" width="20" height="6" rx="0.8" fill="#0c0c0e" stroke="#5a5d63" stroke-width="0.3"/>
+      <text x="0" y="1.8" text-anchor="middle" font-size="3.6" fill="#e9edf0" font-family="Consolas, monospace">1234.5</text></g>
+    <g transform="rotate(${ang(24)})"><path d="M -1 3 L -0.5 -30 L 0.5 -30 L 1 3 Z" fill="#f4f6f8"/></g>
+    ${hub(2.4)}${glass()}</g>`;
+}
+
+// Squarish digital engine monitor (EI CGR-30P style).
+function engineMon(w, h) {
+  const m = 5, X = -w/2+m, Y = -h/2+m, W = w-2*m, H = h-2*m, o = w/2-7;
+  const bars = [...Array(6)].map((_, i) => { const bw = (W*0.5)/6, bx = X+W*0.46+i*bw, bh = 9+((i*53)%15); return `<rect x="${bx}" y="${Y+H-7-bh}" width="${bw-1}" height="${bh}" fill="${i%2?'#e7c93b':'#e0552c'}"/>`; }).join('');
+  return `<g>
+    <rect class="sel-outline" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="5"/>
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="6" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
+    ${screw(-o,-o)}${screw(o,-o)}${screw(-o,o)}${screw(o,o)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
+    <text x="${X+3}" y="${Y+13}" font-size="10" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">2400</text>
+    <text x="${X+3}" y="${Y+19}" font-size="3.2" fill="#9aa0a6" font-family="Arial">RPM</text>
+    <text x="${X+W-3}" y="${Y+12}" text-anchor="end" font-size="6.5" fill="#e9edf0" font-family="Consolas, monospace">28.4</text>
+    <text x="${X+W-3}" y="${Y+17}" text-anchor="end" font-size="3" fill="#9aa0a6" font-family="Arial">MAP</text>
+    ${bars}
+    <text x="${X+2}" y="${Y+H-1.5}" font-size="3" fill="#6b7178" font-family="Arial" letter-spacing="1.5">EGT  CHT  FF  OIL</text>
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#glassGloss)" pointer-events="none"/></g>`;
+}
+
+// Rectangular primary engine display (JPI EDM-900 style) — columns of bars.
+function edmDisplay(w, h) {
+  const m = 2.5, X = -w/2+m, Y = -h/2+m, W = w-2*m, H = h-2*m;
+  const cols = 4, cw = (W*0.52)/cols;
+  const colBars = [...Array(cols)].map((_, i) => {
+    const bx = X+3+i*cw, bh = 14+((i*61)%20);
+    return `<rect x="${bx}" y="${Y+H-4-bh}" width="${cw-1.5}" height="${bh}" fill="${i%2?'#e0552c':'#e7c93b'}"/>
+            <text x="${bx+(cw-1.5)/2}" y="${Y+H-1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="Arial">${i+1}</text>`;
+  }).join('');
+  const reads = [['RPM','2400','#19d27a'],['MAP','28.4','#e9edf0'],['OIL','185°','#e9edf0'],['FUEL','12.1','#19d27a']];
+  const rd = reads.map(([l, v, c], i) => `<g transform="translate(${X+W*0.58} ${Y+6+i*((H-8)/4)})">
+    <text x="0" y="0" font-size="3" fill="#9aa0a6" font-family="Arial">${l}</text>
+    <text x="${W*0.4}" y="0" text-anchor="end" font-size="5" fill="${c}" font-family="Consolas, monospace" font-weight="bold">${v}</text></g>`).join('');
+  return `<g>${avHousing(w, h)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
+    ${colBars}${rd}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#glassGloss)" pointer-events="none"/></g>`;
+}
+
+/* ----------------------------------------------------------------------------
+ * Time, environment & standby
+ * -------------------------------------------------------------------------- */
+
+// Davtron M803 — digital clock / OAT / voltmeter (2¼″ mount).
+function davtronM803() {
+  const SZ = 57;
+  return `<g>${bezel('', SZ)}
+    <rect x="-18" y="-8" width="36" height="13" rx="1.5" fill="#0a0c10" stroke="#1c2430" stroke-width="0.4"/>
+    <text x="0" y="2.4" text-anchor="middle" font-size="9" fill="#e0552c" font-family="Consolas, monospace" font-weight="bold">12:34</text>
+    <text x="-16" y="13.5" font-size="3.2" fill="#9aa0a6" font-family="Arial">15°C</text>
+    <text x="16" y="13.5" text-anchor="end" font-size="3.2" fill="#9aa0a6" font-family="Arial">13.8V</text>
+    ${glass(SZ)}</g>`;
+}
+
+// CO Guardian panel-mount carbon-monoxide detector.
+function coDetector() {
+  const w = 57, h = 38, m = 2;
+  return `<g>${avHousing(w, h)}
+    <text x="${-w/2+4}" y="-7" font-size="6" fill="#b9bfc5" font-family="Arial" font-weight="bold">CO</text>
+    <text x="${-w/2+4}" y="-1.5" font-size="2.8" fill="#6b7178" font-family="Arial">GUARDIAN</text>
+    <circle cx="${-w/2+5}" cy="8" r="2" fill="#1faa4b"/>
+    <text x="${-w/2+9}" y="9" font-size="2.8" fill="#6b7178" font-family="Arial">OK</text>
+    <rect x="2" y="-9" width="${w/2-4}" height="16" rx="1.2" fill="#0a0c10" stroke="#1c2430" stroke-width="0.3"/>
+    <text x="${2+(w/2-4)/2}" y="-1" text-anchor="middle" font-size="7" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">000</text>
+    <text x="${2+(w/2-4)/2}" y="4.5" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="Arial">PPM</text></g>`;
+}
+
+// Generic mechanical Hobbs hour meter.
+function hobbsMeter() {
+  const w = 42, h = 20, m = 2;
+  const digits = '01234', tenth = '6';
+  const dx = (i) => -16 + i * 6.2;
+  const drum = digits.split('').map((d, i) => `<rect x="${dx(i)-2.6}" y="-5" width="5.2" height="10" rx="0.6" fill="#101216" stroke="#2a2c30" stroke-width="0.3"/><text x="${dx(i)}" y="3" text-anchor="middle" font-size="6.4" fill="#e9edf0" font-family="Consolas, monospace">${d}</text>`).join('');
+  return `<g>${avHousing(w, h)}
+    ${drum}
+    <rect x="${dx(5)-2.6}" y="-5" width="5.2" height="10" rx="0.6" fill="#3a1416" stroke="#5a1416" stroke-width="0.3"/>
+    <text x="${dx(5)}" y="3" text-anchor="middle" font-size="6.4" fill="#ff6b6b" font-family="Consolas, monospace">${tenth}</text>
+    <text x="${w/2-2}" y="${h/2-1.5}" text-anchor="end" font-size="2.6" fill="#6b7178" font-family="Arial">HOBBS</text></g>`;
+}
+
+// Generic whiskey (wet) compass.
+function compass() {
+  const SZ = 57, r = 19;
+  const cards = [['N', 0], ['E', 90], ['S', 180], ['W', 270]].map(([t, a]) => { const [x, y] = pol(r, a); return `<text x="${x}" y="${y+2}" text-anchor="middle" font-size="${t==='N'?6:5}" fill="${t==='N'?'#ff6b6b':'#e9edf0'}" font-family="Arial" font-weight="bold">${t}</text>`; }).join('');
+  const minor = [30,60,120,150,210,240,300,330].map(a => { const [x, y] = pol(r, a); return `<circle cx="${x}" cy="${y}" r="0.9" fill="#9aa0a6"/>`; }).join('');
+  return `<g>${bezel('', SZ)}
+    <circle r="${r+4}" fill="#0a0c10" stroke="#26282c" stroke-width="0.5"/>
+    ${cards}${minor}
+    <line x1="0" y1="${-r-3}" x2="0" y2="${-r+1}" stroke="#ffd23a" stroke-width="1"/>
+    <path d="M -2.4 0 H 2.4" stroke="#ffd23a" stroke-width="0.8"/>
+    <circle r="1.4" fill="#ffd23a"/>
+    ${glass(SZ)}</g>`;
+}
+
+// Generic G-meter / accelerometer (2¼″) — RV-8 aerobatic.
+function gMeter() {
+  const SZ = 57, r = 20, a0 = 45, sweep = 270, ang = g => a0 + (g + 4) / 12 * sweep; // -4..+8 G
+  const ticks = [], nums = [];
+  for (let g = -4; g <= 8; g += 1) {
+    const a = ang(g), [x1, y1] = pol(r, a), [x2, y2] = pol(r - 3, a);
+    ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#0a0a0b" stroke-width="0.6"/>`);
+    const [nx, ny] = pol(r - 6, a); nums.push(`<text x="${nx}" y="${ny+1.5}" text-anchor="middle" font-size="3.4" fill="#0a0a0b" font-family="Arial" font-weight="bold">${g}</text>`);
+  }
+  return `<g>${bezel('', SZ)}
+    <circle r="${r+3}" fill="#e9edf0"/>
+    ${ticks.join('')}${nums.join('')}
+    <text x="0" y="-6" text-anchor="middle" font-size="3.4" fill="#3a3d42" font-family="Arial">G</text>
+    <text x="0" y="9" text-anchor="middle" font-size="2.4" fill="#6b7178" font-family="Arial">PUSH-RESET</text>
+    <g transform="rotate(${ang(1)})"><path d="M -0.9 4 L -0.4 ${-(r+1)} L 0.4 ${-(r+1)} L 0.9 4 Z" fill="#111"/></g>
+    <circle r="1.6" fill="#3a3d42"/>
+    ${glass(SZ)}</g>`;
+}
+
+/* ----------------------------------------------------------------------------
+ * Autopilot controllers
+ * -------------------------------------------------------------------------- */
+
+// Trio Pro Pilot — round (3⅛″) autopilot head with display + knob.
+function trioProPilot() {
+  return `<g>${bezel()}
+    <rect x="-24" y="-15" width="48" height="16" rx="1.5" fill="#04130f" stroke="#0a1713" stroke-width="0.4"/>
+    <text x="-21" y="-8.5" font-size="3.8" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">NAV</text>
+    <text x="21" y="-8.5" text-anchor="end" font-size="3.8" fill="#19d27a" font-family="Consolas, monospace">5500</text>
+    <text x="0" y="-3" text-anchor="middle" font-size="3" fill="#7f868d" font-family="Arial">ALT HOLD</text>
+    <g>${['MODE','ALT'].map((t, i) => `<rect x="${-22+i*26}" y="5" width="18" height="7" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/><text x="${-22+i*26+9}" y="9.8" text-anchor="middle" font-size="3" fill="#cdd2d7" font-family="Arial">${t}</text>`).join('')}</g>
+    <circle cx="0" cy="22" r="7" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="0" cy="22" r="3.4" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+    ${glass()}</g>`;
+}
+
+// Dynon SkyView autopilot control panel (horizontal).
+function dynonAP(w, h) {
+  const m = 2.5, labels = ['AP', 'HDG', 'NAV', 'ALT', 'VS'];
+  const knobZone = 16, n = labels.length, area = w-2*m-knobZone, step = area/n, bw = step-1.4;
+  const btns = labels.map((L, i) => `<g>
+    <rect x="${-w/2+m+i*step}" y="${-h/2+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
+    <text x="${-w/2+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="3.6" fill="#cdd2d7" font-family="Arial">${L}</text></g>`).join('');
+  const kr = Math.min(h*0.34, 8), kx = w/2-m-knobZone/2;
+  return `<g>${avHousing(w, h)}${btns}
+    <circle cx="${kx}" cy="0" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="${kx}" cy="0" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/></g>`;
+}
+
+const cgr30p  = () => engineMon(83, 83);
+const edm900  = () => edmDisplay(102, 79);
+const mapGauge = () => manifold();
+const tach    = () => tachometer();
+const m803    = () => davtronM803();
+const coGuard = () => coDetector();
+const hobbs   = () => hobbsMeter();
+const wetCompass = () => compass();
+const gmeter  = () => gMeter();
+const trio    = () => trioProPilot();
+const dynonAPp = () => dynonAP(90, 46);
+
 const g5      = () => efisRound(86, 91, 'GARMIN G5');
 const gi275   = () => efisRound(86, 86, 'GI 275');
 const av30    = () => efisRound(86, 86, 'AV-30');
@@ -850,6 +1047,12 @@ const L = {
   gmc507: 'https://www.aircraftspruce.com/catalog/avpages/garmin11-16219.php',
   hdx:    'https://www.aircraftspruce.com/catalog/avpages/dynonskyview-hdx.php',
   eagle:  'https://www.aircraftspruce.com/catalog/inpages/aoaeaglekit.php',
+  cgr30p: 'https://www.aircraftspruce.com/catalog/inpages/eicgr30p10-05345.php',
+  edm900: 'https://www.aircraftspruce.com/catalog/inpages/edm900.php',
+  m803:   'https://www.aircraftspruce.com/catalog/inpages/davtronclock.php',
+  co:     'https://www.guardianavionics.com/guardian-353-101-panel-co-detector-experimental-aircraft',
+  trio:   'https://www.trioavionics.com/ProPilot.htm',
+  dynonap:'https://www.aircraftspruce.com/catalog/inpages/dynon_autopilotpanel.php',
 };
 
 /* -------------------------------------------------------------------------- */
@@ -885,8 +1088,23 @@ const CATALOG = [
   { id: 'gtx345', name: 'Garmin GTX 345 (ADS-B XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 2.9, amps: 0.5, svg: gtx345, link: L.gtx345, vendor: SPRUCE },
   { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, amps: 0.3, svg: gma245, link: L.gma245, vendor: 'Garmin' },
 
+  // Engine & fuel monitoring
+  { id: 'cgr30p', name: 'EI CGR-30P (engine monitor)', category: 'Engine & Fuel', w: 83, h: 83, weight: 1.1, amps: 0.5, svg: cgr30p, link: L.cgr30p, vendor: SPRUCE },
+  { id: 'edm900', name: 'JPI EDM-900 (engine monitor)', category: 'Engine & Fuel', w: 102, h: 79, weight: 1.7, amps: 0.5, svg: edm900, link: L.edm900, vendor: SPRUCE },
+  { id: 'map',  name: 'Manifold Pressure',  category: 'Engine & Fuel', w: BZ, h: BZ, weight: 0.6, amps: 0,   svg: mapGauge },
+  { id: 'tach', name: 'Tachometer',         category: 'Engine & Fuel', w: BZ, h: BZ, weight: 0.7, amps: 0.1, svg: tach },
+
+  // Time, environment & standby
+  { id: 'm803',     name: 'Davtron M803 (clock/OAT/volts)', category: 'Time / Safety / Standby', w: 57, h: 57, weight: 0.31, amps: 0.1, svg: m803, link: L.m803, vendor: SPRUCE },
+  { id: 'co',       name: 'CO Guardian (CO detector)', category: 'Time / Safety / Standby', w: 57, h: 38, weight: 0.22, amps: 0.1, svg: coGuard, link: L.co, vendor: 'Guardian Avionics' },
+  { id: 'hobbs',    name: 'Hobbs hour meter',  category: 'Time / Safety / Standby', w: 42, h: 20, weight: 0.2, amps: 0,   svg: hobbs },
+  { id: 'compass',  name: 'Whiskey compass',   category: 'Time / Safety / Standby', w: 57, h: 57, weight: 0.5, amps: 0,   svg: wetCompass },
+  { id: 'gmeter',   name: 'G-meter (2¼″)',     category: 'Time / Safety / Standby', w: 57, h: 57, weight: 0.4, amps: 0,   svg: gmeter },
+
   // Autopilot
   { id: 'gmc507', name: 'Garmin GMC 507 (AP control)', category: 'Autopilot', w: 159, h: 53, weight: 0.68, amps: 0.2, svg: gmc507, link: L.gmc507, vendor: SPRUCE },
+  { id: 'trio',   name: 'Trio Pro Pilot (autopilot)',  category: 'Autopilot', w: BZ, h: BZ, weight: 4.1, amps: 0.5, svg: trio, link: L.trio, vendor: 'Trio Avionics' },
+  { id: 'dynonap', name: 'Dynon SV-AP-PANEL',          category: 'Autopilot', w: 90, h: 46, weight: 0.3, amps: 0.15, svg: dynonAPp, link: L.dynonap, vendor: SPRUCE },
 
   // Switches & controls (generic / idealized — amps are 0; they pass power, not draw it)
   { id: 'sw-toggle', name: 'Toggle switch',          category: 'Switches & Controls', w: 13, h: 20, weight: 0.05, amps: 0,   svg: swToggle },

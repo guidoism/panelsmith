@@ -82,12 +82,22 @@ palette):
 - **Nav / Comm / Transponder**: Garmin GTN 750Xi, GTN 650Xi, GPS 175, GNC 355 (GPS/com),
   GNX 375 (GPS/transponder), GTR 205 (com), GTX 335 and GTX 345 (ADS-B) transponders, GMA
   245 (audio) — at the real 6.25″ stack width.
-- **Autopilot**: Garmin GMC 507 mode controller (GFC 500).
+- **Autopilot**: Garmin GMC 507 mode controller (GFC 500), Trio Pro Pilot, Dynon
+  SV-AP-PANEL.
+- **Engine & Fuel**: EI CGR-30P and JPI EDM-900 engine monitors (plus generic manifold
+  pressure and tachometer rounds).
+- **Time / Safety / Standby**: Davtron M803 (clock/OAT/volts) and CO Guardian CO detector,
+  plus generic Hobbs meter, whiskey compass, and a G-meter.
 - **Glass Displays**: Garmin G3X (GDU 460 / 450 / 470) and Dynon SkyView HDX (10″ / 7″).
 
 The Nav/Comm set reflects what RV builders have actually been installing in recent years —
 the compact GPS 175 / GNC 355 / GNX 375 navigator family and the GTX 345 ADS-B transponder
 alongside the larger GTN touchscreens.
+
+The panel also includes the **generic furniture** every real panel has: toggle / rocker /
+master-alt / magneto switches, a starter button, circuit breakers, a dimmer knob, USB
+ports, eyeball air vents, cabin heat/air controls, an annunciator cluster, and N-number /
+experimental placards. (Per-instance editable label text is a planned follow-up.)
 
 Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 V nominal
 — pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for
