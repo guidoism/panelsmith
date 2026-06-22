@@ -126,14 +126,12 @@ If you edit the blank panel SVG, regenerate the inlined copy:
 node -e 'const fs=require("fs");fs.writeFileSync("js/panel-data.js","window.APP = window.APP || {};\nAPP.PANEL_SVG = "+JSON.stringify(fs.readFileSync("rv-8-panel-blank.svg","utf8"))+";\n")'
 ```
 
-## Ideas for later
+## Roadmap
 
-- 3D fit-check using `RV-8_Panel.stl` plus per-instrument protrusion depth, to see how
-  units pack into the avionics bay (see `NOTES.md` for the conversion pipeline).
-- More instruments (2¼″ rounds, switches, breakers, radios) and real product-specific
-  variants behind each idealized round.
-- Multiple aircraft models / multi-user — the `designs.js` repository interface is kept
-  backend-swappable for this.
+Beyond layout, the plan is to grow Panelsmith into an electrical-design tool — assign
+instruments to buses, pick a power-system architecture, and check the panel against
+mission profiles — plus 3D export for Blender. See **[ROADMAP.md](ROADMAP.md)** for the
+full ordered plan.
 
 ## Contributing
 
