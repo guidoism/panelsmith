@@ -81,7 +81,7 @@ function buildPalette() {
   for (const cat of cats) {
     const wrap = document.createElement('div');
     wrap.className = 'palette-cat';
-    const full = cat.name === 'Glass Displays' || cat.name === 'Nav / Comm / Transponder';
+    const full = cat.name === 'Glass Displays' || cat.name === 'Nav / Comm / Transponder' || cat.name === 'Autopilot';
     wrap.innerHTML = `<h3>${cat.name}</h3><div class="palette-grid">${
       cat.items.map(inst => `
         <div class="palette-item${full ? ' full' : ''}" data-id="${inst.id}" title="${inst.name}">

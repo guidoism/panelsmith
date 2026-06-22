@@ -79,9 +79,15 @@ hardware, the **real, buyable** units carry accurate sizes/weights and a purchas
 palette):
 
 - **Electronic Flight Instruments**: Garmin G5, Garmin GI 275, uAvionix AV-30-E.
-- **Nav / Comm / Transponder**: Garmin GTN 750Xi, GTN 650Xi, GTR 205 (com), GTX 335
-  (transponder), GMA 245 (audio) — at the real 6.25″ stack width.
+- **Nav / Comm / Transponder**: Garmin GTN 750Xi, GTN 650Xi, GPS 175, GNC 355 (GPS/com),
+  GNX 375 (GPS/transponder), GTR 205 (com), GTX 335 and GTX 345 (ADS-B) transponders, GMA
+  245 (audio) — at the real 6.25″ stack width.
+- **Autopilot**: Garmin GMC 507 mode controller (GFC 500).
 - **Glass Displays**: Garmin G3X (GDU 460 / 450 / 470) and Dynon SkyView HDX (10″ / 7″).
+
+The Nav/Comm set reflects what RV builders have actually been installing in recent years —
+the compact GPS 175 / GNC 355 / GNX 375 navigator family and the GTX 345 ADS-B transponder
+alongside the larger GTN touchscreens.
 
 Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 V nominal
 — pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for

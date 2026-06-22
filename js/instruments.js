@@ -621,14 +621,57 @@ function audioPanel(w, h) {
   return `<g>${avHousing(w, h)}${btns}</g>`;
 }
 
+// Compact touchscreen navigator (GPS 175 / GNC 355 / GNX 375 family) — map
+// screen on the left, status bar on top, two buttons + a dual knob on the right.
+function navSmall(w, h, opts = {}) {
+  const sx = -w/2, sy = -h/2, m = 2.2, knobZone = 21;
+  const X = sx+m, Y = sy+m, W = w-2*m-knobZone, H = h-2*m;
+  const bar = opts.topLabel ? 7 : 0;
+  let inner = `${avHousing(w, h)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#04130f"/>
+    ${mfdMap(X, Y+bar, W, H-bar)}`;
+  if (opts.topLabel) {
+    inner += `<rect x="${X}" y="${Y}" width="${W}" height="${bar}" fill="#0a1713" opacity="0.95"/>
+      <text x="${X+2.5}" y="${Y+5}" font-size="3.6" fill="#19d27a" font-family="Arial" font-weight="bold">${opts.topLabel}</text>`;
+    if (opts.topRight)
+      inner += `<text x="${X+W-2.5}" y="${Y+5}" text-anchor="end" font-size="3.6" fill="${opts.topRightColor || '#7f868d'}" font-family="Arial">${opts.topRight}</text>`;
+  }
+  const bx = X + W + 2.5, bw = knobZone - 5, kr = Math.min(h*0.32, 6.5);
+  inner += `<rect x="${bx}" y="${Y}" width="${bw}" height="6" rx="0.8" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
+    <rect x="${bx}" y="${Y+7.5}" width="${bw}" height="6" rx="0.8" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
+    <circle cx="${bx+bw/2}" cy="${sy+h-m-kr}" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="${bx+bw/2}" cy="${sy+h-m-kr}" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>`;
+  return `<g>${inner}</g>`;
+}
+
+// Autopilot mode controller (GMC 507) — row of mode keys + a command knob.
+function apController(w, h) {
+  const sx = -w/2, sy = -h/2, m = 2.5, knobZone = 15;
+  const labels = ['AP','FD','HDG','NAV','ALT','VS','VNV','LVL'];
+  const n = labels.length, area = w-2*m-knobZone, step = area/n, bw = step-1.4;
+  const btns = labels.map((L, i) => `<g>
+    <rect x="${sx+m+i*step}" y="${sy+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
+    <text x="${sx+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="${Math.min(4, h*0.16)}" fill="#cdd2d7" font-family="Arial">${L}</text></g>`).join('');
+  const kr = Math.min(h*0.34, 8), kx = sx+w-m-knobZone/2;
+  return `<g>${avHousing(w, h)}${btns}
+    <circle cx="${kx}" cy="0" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="${kx}" cy="0" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+  </g>`;
+}
+
 const g5      = () => efisRound(86, 91, 'GARMIN G5');
 const gi275   = () => efisRound(86, 86, 'GI 275');
 const av30    = () => efisRound(86, 86, 'AV-30');
 const gtn750  = () => gtnTall(159, 152);
 const gtn650  = () => gtnWide(159, 67);
+const gps175  = () => navSmall(159, 51, { topLabel: 'GPS 175' });
+const gnc355  = () => navSmall(159, 51, { topLabel: 'COM', topRight: '118.00', topRightColor: '#19d27a' });
+const gnx375  = () => navSmall(159, 51, { topLabel: 'XPDR 1200', topRight: 'ADS-B' });
 const gtx335  = () => radioStrip(160, 43, [{ t: '1200', c: '#19d27a' }]);
+const gtx345  = () => radioStrip(160, 43, [{ t: '1200', c: '#19d27a' }, { t: 'ADS-B', c: '#7f868d' }]);
 const gtr205  = () => radioStrip(159, 34, [{ t: '118.00', c: '#19d27a' }, { t: '121.50', c: '#7f868d' }]);
 const gma245  = () => audioPanel(159, 33);
+const gmc507  = () => apController(159, 53);
 
 const SPRUCE = 'Aircraft Spruce';
 const L = {
@@ -638,9 +681,14 @@ const L = {
   av30:   'https://www.aircraftspruce.com/catalog/inpages/uavionix_av-30.php',
   gtn750: 'https://www.aircraftspruce.com/catalog/avpages/ngar750.php',
   gtn650: 'https://www.aircraftspruce.com/catalog/avpages/ngar650.php',
+  gps175: 'https://www.garmin.com/en-US/p/577202/',
+  gnc355: 'https://www.garmin.com/en-US/p/689774/',
+  gnx375: 'https://www.aircraftspruce.com/catalog/avpages/garmin_11-17227.php',
   gtx335: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtx335promo.php',
+  gtx345: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtx345.php',
   gtr205: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtr205.php',
   gma245: 'https://www.garmin.com/en-US/c/aviation/audio-panels-radios/',
+  gmc507: 'https://www.aircraftspruce.com/catalog/avpages/garmin11-16219.php',
   hdx:    'https://www.aircraftspruce.com/catalog/avpages/dynonskyview-hdx.php',
   eagle:  'https://www.aircraftspruce.com/catalog/inpages/aoaeaglekit.php',
 };
@@ -670,9 +718,16 @@ const CATALOG = [
   // Real nav / comm / transponder / audio (6.25″ standard width)
   { id: 'gtn750', name: 'Garmin GTN 750Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 152, weight: 5.5, amps: 3.0, svg: gtn750, link: L.gtn750, vendor: SPRUCE },
   { id: 'gtn650', name: 'Garmin GTN 650Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 67,  weight: 3.0, amps: 1.5, svg: gtn650, link: L.gtn650, vendor: SPRUCE },
+  { id: 'gps175', name: 'Garmin GPS 175',       category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 1.3, amps: 0.6, svg: gps175, link: L.gps175, vendor: 'Garmin' },
+  { id: 'gnc355', name: 'Garmin GNC 355 (GPS/COM)', category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 3.3, amps: 1.0, svg: gnc355, link: L.gnc355, vendor: 'Garmin' },
+  { id: 'gnx375', name: 'Garmin GNX 375 (GPS/XPDR)', category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 3.2, amps: 1.2, svg: gnx375, link: L.gnx375, vendor: SPRUCE },
   { id: 'gtr205', name: 'Garmin GTR 205 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.5, amps: 1.5, svg: gtr205, link: L.gtr205, vendor: SPRUCE },
   { id: 'gtx335', name: 'Garmin GTX 335 (XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 1.7, amps: 0.5, svg: gtx335, link: L.gtx335, vendor: SPRUCE },
+  { id: 'gtx345', name: 'Garmin GTX 345 (ADS-B XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 2.9, amps: 0.5, svg: gtx345, link: L.gtx345, vendor: SPRUCE },
   { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, amps: 0.3, svg: gma245, link: L.gma245, vendor: 'Garmin' },
+
+  // Autopilot
+  { id: 'gmc507', name: 'Garmin GMC 507 (AP control)', category: 'Autopilot', w: 159, h: 53, weight: 0.68, amps: 0.2, svg: gmc507, link: L.gmc507, vendor: SPRUCE },
 
   // Glass displays (all real)
   { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  amps: 1.8, svg: gdu460, link: L.g3x, vendor: SPRUCE },
