@@ -42,9 +42,17 @@ nudge · `Alt`-drag free placement · `Esc` deselect.
 - **3⅛″ rounds** (idealized, detailed parametric SVG with cast bezel, corner screws, and
   glass reflection): Attitude (sky/ground, pitch ladder, OFF flag), Directional Gyro,
   Airspeed, Altimeter (three-pointer + Kollsman window), Vertical Speed, Turn Coordinator.
+- **AoA / Lift** indicators (three styles): Lift Reserve Indicator (2¼″ round needle
+  gauge), Alpha Systems "Eagle" chevron + donut display, and a Dynon/Garmin-style LED
+  ladder.
 - **Garmin G3X Touch glass** (real bezel sizes, faithful PFD/MFD layout in SVG): GDU 460
   (10″, 275.5 × 198.6 mm), GDU 450 (7″ landscape, 198.6 × 152.7 mm), and GDU 470 (7″
   portrait, 152.7 × 198.6 mm).
+
+Each item carries a **weight** (lb) — Garmin's published figures for the glass, and
+representative averages for the idealized instruments (real units vary by make/model). The
+inspector shows a live **item count + total weight** for the panel; per-item weights
+appear in the palette and on the selected instrument.
 
 ## Airspeed V-speeds
 

@@ -71,22 +71,23 @@ function screw(x, y) {
   </g>`;
 }
 
-function bezel(extra = '') {
-  const o = 34;
+function bezel(extra = '', size = BZ) {
+  const s = size / 2, dr = size / 2 - 4, o = size / 2 - 8;
   return `
-    <rect class="sel-outline" x="${-BZ/2}" y="${-BZ/2}" width="${BZ}" height="${BZ}" rx="6"/>
-    <rect x="${-BZ/2}" y="${-BZ/2}" width="${BZ}" height="${BZ}" rx="7" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
-    <rect x="${-BZ/2+1}" y="${-BZ/2+1}" width="${BZ-2}" height="${BZ-2}" rx="6" fill="none" stroke="#5b5f66" stroke-width="0.4" opacity="0.45"/>
+    <rect class="sel-outline" x="${-s}" y="${-s}" width="${size}" height="${size}" rx="6"/>
+    <rect x="${-s}" y="${-s}" width="${size}" height="${size}" rx="7" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
+    <rect x="${-s+1}" y="${-s+1}" width="${size-2}" height="${size-2}" rx="6" fill="none" stroke="#5b5f66" stroke-width="0.4" opacity="0.45"/>
     ${screw(-o,-o)}${screw(o,-o)}${screw(-o,o)}${screw(o,o)}
-    <circle r="${DIAL_R+1.5}" fill="#0a0a0b"/>
-    <circle r="${DIAL_R}" fill="url(#dialFace)" stroke="#000" stroke-width="0.5"/>
+    <circle r="${dr+1.5}" fill="#0a0a0b"/>
+    <circle r="${dr}" fill="url(#dialFace)" stroke="#000" stroke-width="0.5"/>
     ${extra}
   `;
 }
 
 // Glass reflection + thin inner ring, drawn on TOP of dial content.
-function glass() {
-  return `<circle r="${DIAL_R}" fill="url(#glassGloss)" stroke="#3a3d44" stroke-width="0.5" pointer-events="none"/>`;
+function glass(size = BZ) {
+  const dr = size / 2 - 4;
+  return `<circle r="${dr}" fill="url(#glassGloss)" stroke="#3a3d44" stroke-width="0.5" pointer-events="none"/>`;
 }
 
 function hub(r = 2.4) {
@@ -360,6 +361,76 @@ function turn() {
 }
 
 /* ----------------------------------------------------------------------------
+ * AoA / Lift indicators — three different styles.
+ * -------------------------------------------------------------------------- */
+
+// 1) Lift Reserve Indicator — 2¼" round, analog needle over a colour arc.
+function lri() {
+  const SZ = 57, r = 20;
+  const seg = (d0, d1, c) => `<path d="${arc(r, d0, d1)}" fill="none" stroke="${c}" stroke-width="4.5" stroke-linecap="butt"/>`;
+  const ticks = [-78,-55,-26,8,40,78].map(d => {
+    const [x1,y1] = pol(r+3.5, d), [x2,y2] = pol(r-3.5, d);
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#0a0a0b" stroke-width="0.7"/>`;
+  }).join('');
+  return `<g>
+    ${bezel('', SZ)}
+    ${seg(-78,-40,'#e02424')}
+    ${seg(-40,-12,'#f2c200')}
+    ${seg(-12,40,'#1faa4b')}
+    ${seg(40,78,'#2f7fc4')}
+    ${ticks}
+    <text x="0" y="-2.5" text-anchor="middle" font-size="3.6" fill="#9aa0a6" font-family="Arial">LIFT</text>
+    <text x="0" y="2.2" text-anchor="middle" font-size="2.7" fill="#6b7178" font-family="Arial">RESERVE</text>
+    <g><path d="M -1 3 L -0.4 ${-(r+1)} L 0.4 ${-(r+1)} L 1 3 Z" fill="#f4f6f8"/></g>
+    ${hub(1.8)}
+    ${glass(SZ)}
+  </g>`;
+}
+
+function aoaHousing(w, h, inner) {
+  return `<g>
+    <rect class="sel-outline" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="3"/>
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" fill="#101113" stroke="#000" stroke-width="0.8"/>
+    <rect x="${-w/2+1.6}" y="${-h/2+1.6}" width="${w-3.2}" height="${h-3.2}" rx="3" fill="#060708" stroke="#26282c" stroke-width="0.4"/>
+    ${inner}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" fill="url(#glassGloss)" pointer-events="none"/>
+  </g>`;
+}
+
+// 2) Alpha Systems "Eagle" — chevron + donut display.
+function aoaEagle() {
+  const w = 38, h = 66;
+  const chev = (cy, color, dir, lit) =>
+    `<path d="M -9 ${cy+3.2*dir} L 0 ${cy-3.2*dir} L 9 ${cy+3.2*dir}" fill="none" stroke="${color}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="${lit?1:0.3}"/>`;
+  return aoaHousing(w, h, `
+    ${chev(-22,'#e02424',1,true)}
+    ${chev(-11,'#f2c200',1,false)}
+    <circle cx="0" cy="2" r="5.2" fill="none" stroke="#1faa4b" stroke-width="3" opacity="0.85"/>
+    ${chev(16,'#2f7fc4',-1,false)}
+    ${chev(25,'#2f7fc4',-1,false)}
+    <text x="0" y="${h/2-3}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="Arial" letter-spacing="0.5">AOA</text>
+  `);
+}
+
+// 3) Dynon / Garmin style LED ladder — colour bands + pointer.
+function aoaLadder() {
+  const w = 32, h = 64, bx = 3, bw = 9, top = -25;
+  return aoaHousing(w, h, `
+    <rect x="${bx}" y="${top}" width="${bw}" height="11" fill="#e02424"/>
+    <rect x="${bx}" y="${top+11}" width="${bw}" height="9" fill="#f2c200"/>
+    <rect x="${bx}" y="${top+20}" width="${bw}" height="19" fill="#1faa4b"/>
+    <rect x="${bx}" y="${top+39}" width="${bw}" height="11" fill="#e9edf0"/>
+    <g stroke="#0a0a0b" stroke-width="0.5">
+      <line x1="${bx}" y1="${top+11}" x2="${bx+bw}" y2="${top+11}"/>
+      <line x1="${bx}" y1="${top+20}" x2="${bx+bw}" y2="${top+20}"/>
+      <line x1="${bx}" y1="${top+39}" x2="${bx+bw}" y2="${top+39}"/>
+    </g>
+    <path d="M ${bx-1.5} ${top+29} l -5 -4 l 0 8 z" fill="#fff"/>
+    <text x="-5.5" y="${h/2-4}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="Arial">AOA</text>
+  `);
+}
+
+/* ----------------------------------------------------------------------------
  * Garmin G3X Touch glass displays (faithful PFD/MFD layout, pure SVG)
  * -------------------------------------------------------------------------- */
 function pfd(x, y, w, h) {
@@ -457,16 +528,21 @@ function gdu470() {
 
 /* -------------------------------------------------------------------------- */
 
+// weight is in pounds. For the idealized instruments these are representative
+// averages (real units vary by make/model); the glass weights are Garmin's.
 const CATALOG = [
-  { id: 'ai',  name: 'Attitude Indicator', category: '3⅛″ Round', w: BZ, h: BZ, svg: attitude },
-  { id: 'dg',  name: 'Directional Gyro',   category: '3⅛″ Round', w: BZ, h: BZ, svg: dg },
-  { id: 'asi', name: 'Airspeed',           category: '3⅛″ Round', w: BZ, h: BZ, svg: airspeed },
-  { id: 'alt', name: 'Altimeter',          category: '3⅛″ Round', w: BZ, h: BZ, svg: altimeter },
-  { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: BZ, h: BZ, svg: vsi },
-  { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: BZ, h: BZ, svg: turn },
-  { id: 'gdu460', name: 'G3X Touch — GDU 460 (10″)',          category: 'Garmin Glass', w: 275.5, h: 198.6, svg: gdu460 },
-  { id: 'gdu450', name: 'G3X Touch — GDU 450 (7″ landscape)', category: 'Garmin Glass', w: 198.6, h: 152.7, svg: gdu450 },
-  { id: 'gdu470', name: 'G3X Touch — GDU 470 (7″ portrait)',  category: 'Garmin Glass', w: 152.7, h: 198.6, svg: gdu470 },
+  { id: 'ai',  name: 'Attitude Indicator', category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.6, svg: attitude },
+  { id: 'dg',  name: 'Directional Gyro',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.8, svg: dg },
+  { id: 'asi', name: 'Airspeed',           category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.6, svg: airspeed },
+  { id: 'alt', name: 'Altimeter',          category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.8, svg: altimeter },
+  { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.7, svg: vsi },
+  { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.2, svg: turn },
+  { id: 'lri',       name: 'Lift Reserve Indicator (2¼″)',  category: 'AoA / Lift', w: 57, h: 57, weight: 0.5, svg: lri },
+  { id: 'aoaeagle',  name: 'AoA — Alpha Systems (chevron)',  category: 'AoA / Lift', w: 38, h: 66, weight: 0.3, svg: aoaEagle },
+  { id: 'aoaladder', name: 'AoA — LED ladder (Dynon/Garmin)', category: 'AoA / Lift', w: 32, h: 64, weight: 0.3, svg: aoaLadder },
+  { id: 'gdu460', name: 'G3X Touch — GDU 460 (10″)',          category: 'Garmin Glass', w: 275.5, h: 198.6, weight: 4.6,  svg: gdu460 },
+  { id: 'gdu450', name: 'G3X Touch — GDU 450 (7″ landscape)', category: 'Garmin Glass', w: 198.6, h: 152.7, weight: 2.69, svg: gdu450 },
+  { id: 'gdu470', name: 'G3X Touch — GDU 470 (7″ portrait)',  category: 'Garmin Glass', w: 152.7, h: 198.6, weight: 2.66, svg: gdu470 },
 ];
 
 const CATALOG_BY_ID = Object.fromEntries(CATALOG.map(i => [i.id, i]));

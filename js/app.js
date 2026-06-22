@@ -52,7 +52,7 @@ function wireStage() {
 }
 
 function wirePlacement() {
-  placement.onChange = () => markDirty(true);
+  placement.onChange = () => { markDirty(true); updateSummary(); };
   placement.onSelect = (it) => renderSelection(it);
 }
 
@@ -105,9 +105,8 @@ function applyPaletteFilter() {
 
 function fmtDims(inst) {
   const mm = (n) => Math.round(n);
-  return inst.category === 'Garmin Glass'
-    ? `${mm(inst.w)}×${mm(inst.h)} mm`
-    : `Ø ${mm(inst.w)} mm`;
+  const size = inst.w === inst.h ? `Ø ${mm(inst.w)} mm` : `${mm(inst.w)}×${mm(inst.h)} mm`;
+  return `${size} · ${inst.weight} lb`;
 }
 
 function startPaletteDrag(inst, e) {
@@ -190,9 +189,18 @@ function renderSelection(it) {
   const sec = $('#selection-section');
   if (!it) { sec.hidden = true; return; }
   sec.hidden = false;
-  $('#selection-name').textContent = CATALOG_BY_ID[it.instId]?.name || it.instId;
+  const inst = CATALOG_BY_ID[it.instId];
+  $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb` : it.instId;
   $('#sel-x').value = Math.round(it.x);
   $('#sel-y').value = Math.round(it.y);
+}
+
+// Running tally of placed-instrument count and total weight.
+function updateSummary() {
+  const items = placement.items;
+  const w = items.reduce((s, it) => s + (CATALOG_BY_ID[it.instId]?.weight || 0), 0);
+  $('#panel-summary').textContent =
+    `${items.length} item${items.length === 1 ? '' : 's'} · ≈ ${w.toFixed(1)} lb`;
 }
 
 /* ------------------------------- V-speeds -------------------------------- */
@@ -280,6 +288,7 @@ function applyDesign(d) {
   APP.setASIConfig(d.vspeeds);   // before instruments render
   buildPalette();                // ASI thumbnail reflects this design
   placement.setItems(d.instruments);
+  updateSummary();
   markDirty(false);
 }
 
