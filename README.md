@@ -1,5 +1,7 @@
 # Panelsmith
 
+### ▶ [Launch Panelsmith → guidoism.github.io/panelsmith](https://guidoism.github.io/panelsmith/)
+
 A no-build, browser-based tool for mocking up aircraft avionics panel layouts (starting
 with the Van's RV-8). Drag scaled instruments onto the true-scale blank panel, jot notes,
 name the design, keep many designs side by side, and export a composited PNG.
