@@ -1,11 +1,16 @@
 # Contributing to Panelsmith
 
-Contributions are welcome — especially new instruments. The bar is simple: a PR should
-**respect the project's principles** (see the [Philosophy](README.md#philosophy) in the
-README) and keep the project small, honest, and dependency-free.
+**First: you don't have to.** Panelsmith is [MIT-licensed](LICENSE) — fork it and take it
+wherever you like, including directions that ignore everything here. No permission needed,
+no hard feelings.
 
-In short: no build step, real-world accuracy, pure-SVG instruments, local-first, and code
-anyone can read.
+This guide is only for PRs intended for **this** repository. Those are welcome —
+especially new instruments — when they **respect the project's principles** (see the
+[Philosophy](README.md#philosophy) in the README) and keep the project small, honest, and
+dependency-free.
+
+In short, for a PR to be merged here: no build step, real-world accuracy, pure-SVG
+instruments, local-first, and code anyone can read.
 
 ## Adding an instrument
 

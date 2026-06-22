@@ -8,7 +8,11 @@ name the design, keep many designs side by side, and export a composited PNG.
 
 ## Philosophy
 
-These principles define what Panelsmith is — please keep contributions aligned with them:
+**Fork freely.** Under the [MIT license](LICENSE) you can take Panelsmith anywhere — build
+something completely different, even something that rejects everything below. That's the
+point of open source, and you need no one's permission. These principles aren't rules for
+users or forks; they're simply the taste that guides what gets merged into **this** repo —
+the bar a pull request meets to be accepted here:
 
 1. **No build step, ever.** Plain HTML/CSS + classic-script JS; runs from `file://` and
    static hosting. No npm, bundler, framework, or transpiler.
@@ -131,9 +135,10 @@ node -e 'const fs=require("fs");fs.writeFileSync("js/panel-data.js","window.APP 
 
 ## Contributing
 
-Contributions are welcome — especially new instruments — as long as they respect the
-[Philosophy](#philosophy) above. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add an
-instrument and the pre-PR checklist.
+Want to take this somewhere new? **Fork it** — no permission needed. If instead you'd like
+to contribute back to this repo, PRs are welcome (especially new instruments) when they
+fit the [Philosophy](#philosophy) above. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to
+add an instrument and the pre-PR checklist.
 
 ## License
 
