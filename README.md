@@ -6,6 +6,27 @@ A no-build, browser-based tool for mocking up aircraft avionics panel layouts (s
 with the Van's RV-8). Drag scaled instruments onto the true-scale blank panel, jot notes,
 name the design, keep many designs side by side, and export a composited PNG.
 
+## Philosophy
+
+These principles define what Panelsmith is — please keep contributions aligned with them:
+
+1. **No build step, ever.** Plain HTML/CSS + classic-script JS; runs from `file://` and
+   static hosting. No npm, bundler, framework, or transpiler.
+2. **Physically honest.** Real millimetres, true-scale instruments, manufacturer/POH
+   weights and V-speeds. Cite sources; don't eyeball dimensions.
+3. **Instruments are pure SVG.** Parametric, centered on the origin, drawn in mm — no
+   raster images.
+4. **Idealized first, real when ready.** Generic instruments for early sketching; real,
+   buyable products are a separate tier with purchase links.
+5. **Local-first & private.** Browser storage + JSON export; no accounts, servers,
+   tracking, or analytics. The storage layer stays backend-swappable, but the default is
+   offline and dependency-free.
+6. **A pleasure to look at.** Polished, aviation-authentic visuals over generic UI.
+7. **Stay small and readable.** Anyone can open a file and understand it; resist features
+   that compromise principles 1, 2, or 5.
+8. **Respect the brands.** Real product names/links are buyer convenience; the renderings
+   are representations, not official assets, and imply no endorsement.
+
 ## Run
 
 No build step. **Just double-click `index.html`** — it runs straight from the filesystem
@@ -107,3 +128,13 @@ node -e 'const fs=require("fs");fs.writeFileSync("js/panel-data.js","window.APP 
   variants behind each idealized round.
 - Multiple aircraft models / multi-user — the `designs.js` repository interface is kept
   backend-swappable for this.
+
+## Contributing
+
+Contributions are welcome — especially new instruments — as long as they respect the
+[Philosophy](#philosophy) above. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add an
+instrument and the pre-PR checklist.
+
+## License
+
+[MIT](LICENSE) © 2026 Guido Bartolucci.
