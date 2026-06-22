@@ -70,10 +70,11 @@ function buildPalette() {
   for (const cat of cats) {
     const wrap = document.createElement('div');
     wrap.className = 'palette-cat';
-    const full = cat.name === 'Garmin Glass';
+    const full = cat.name === 'Glass Displays' || cat.name === 'Nav / Comm / Transponder';
     wrap.innerHTML = `<h3>${cat.name}</h3><div class="palette-grid">${
       cat.items.map(inst => `
         <div class="palette-item${full ? ' full' : ''}" data-id="${inst.id}" title="${inst.name}">
+          ${inst.link ? '<span class="buy-badge" title="Real product — purchase link in the inspector">↗</span>' : ''}
           <div class="palette-thumb">${thumbSVG(inst)}</div>
           <div class="palette-name">${inst.name}</div>
           <div class="palette-dims">${fmtDims(inst)}</div>
@@ -193,6 +194,15 @@ function renderSelection(it) {
   $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb` : it.instId;
   $('#sel-x').value = Math.round(it.x);
   $('#sel-y').value = Math.round(it.y);
+
+  const link = $('#selection-link');
+  if (inst && inst.link) {
+    link.href = inst.link;
+    link.textContent = `View / buy at ${inst.vendor || 'vendor'} ↗`;
+    link.hidden = false;
+  } else {
+    link.hidden = true;
+  }
 }
 
 // Running tally of placed-instrument count and total weight.

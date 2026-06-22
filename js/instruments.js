@@ -489,7 +489,7 @@ function g3xBezel(w, h, knobR) {
   return { sx, sy, m, screenX, screenY, screenW, screenH, knobY };
 }
 
-function gduLandscape(w, h, knobR, fs) {
+function gduLandscape(w, h, knobR, fs, brand = 'GARMIN') {
   const b = g3xBezel(w, h, knobR), gap = 1, halfW = (b.screenW - gap) / 2;
   const kx = Math.round(w * 0.066);
   return `
@@ -502,12 +502,14 @@ function gduLandscape(w, h, knobR, fs) {
     <circle cx="${b.sx + kx}" cy="${b.knobY}" r="${knobR*0.55}" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
     <circle cx="${b.sx + w - kx}" cy="${b.knobY}" r="${knobR}" fill="#0c0c0d" stroke="#33363c" stroke-width="0.8"/>
     <circle cx="${b.sx + w - kx}" cy="${b.knobY}" r="${knobR*0.55}" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
-    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="${fs}" fill="#3a3d44" font-family="sans-serif" letter-spacing="1">GARMIN</text>
+    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="${fs}" fill="#3a3d44" font-family="sans-serif" letter-spacing="1">${brand}</text>
   `;
 }
 
 const gdu460 = () => gduLandscape(275.5, 198.6, 9, 6);
 const gdu450 = () => gduLandscape(198.6, 152.7, 8, 5);
+const dynonHDX1100 = () => gduLandscape(264, 172, 8, 6, 'DYNON');
+const dynonHDX800  = () => gduLandscape(194, 142, 7, 5, 'DYNON');
 
 function gdu470() {
   const w = 152.7, h = 198.6, b = g3xBezel(w, h, 8), gap = 1;
@@ -526,10 +528,127 @@ function gdu470() {
   `;
 }
 
+/* ----------------------------------------------------------------------------
+ * Real, buyable units — accurate sizes/weights, with a purchase link.
+ * -------------------------------------------------------------------------- */
+
+// Round electronic flight instrument (G5 / GI 275 / AV-30) — mini PFD + label.
+function efisRound(w, h, label) {
+  const sx = -w/2, sy = -h/2, m = 2.6, lab = 5.5;
+  const X = sx+m, Y = sy+m, W = w-2*m, H = h-2*m-lab;
+  return `<g>
+    <rect class="sel-outline" x="${sx}" y="${sy}" width="${w}" height="${h}" rx="4"/>
+    <rect x="${sx}" y="${sy}" width="${w}" height="${h}" rx="5" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
+    <rect x="${sx+1}" y="${sy+1}" width="${w-2}" height="${h-2}" rx="4" fill="none" stroke="#5b5f66" stroke-width="0.4" opacity="0.4"/>
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
+    ${pfd(X, Y, W, H)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#glassGloss)" pointer-events="none"/>
+    <text x="0" y="${sy+h-1.7}" text-anchor="middle" font-size="3.4" fill="#b9bfc5" font-family="Arial" font-weight="bold" letter-spacing="0.4">${label}</text>
+  </g>`;
+}
+
+function avHousing(w, h) {
+  const sx = -w/2, sy = -h/2;
+  return `<rect class="sel-outline" x="${sx}" y="${sy}" width="${w}" height="${h}" rx="2.5"/>
+    <rect x="${sx}" y="${sy}" width="${w}" height="${h}" rx="3" fill="#15171a" stroke="#000" stroke-width="0.8"/>
+    <rect x="${sx+1}" y="${sy+1}" width="${w-2}" height="${h-2}" rx="2.5" fill="none" stroke="#3a3d43" stroke-width="0.4" opacity="0.5"/>`;
+}
+
+// GTN 750Xi — tall touchscreen navigator.
+function gtnTall(w, h) {
+  const sx = -w/2, sy = -h/2, m = 2.5, knob = 12;
+  const X = sx+m, Y = sy+m, W = w-2*m, H = h-2*m-knob;
+  return `<g>
+    ${avHousing(w, h)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#04130f"/>
+    ${mfdMap(X, Y, W, H)}
+    <rect x="${X}" y="${Y}" width="${W}" height="8" fill="#0a1713" opacity="0.9"/>
+    <text x="${X+3}" y="${Y+5.6}" font-size="3.4" fill="#19d27a" font-family="Arial" font-weight="bold">DIRECT-TO</text>
+    <text x="${X+W-3}" y="${Y+5.6}" text-anchor="end" font-size="3.4" fill="#19d27a" font-family="Arial">115 KT</text>
+    <rect x="${sx+5}" y="${sy+h-knob+2.5}" width="11" height="${knob-5}" rx="1" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
+    <rect x="${sx+18}" y="${sy+h-knob+2.5}" width="11" height="${knob-5}" rx="1" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
+    <circle cx="${sx+w-9}" cy="${sy+h-knob/2-0.5}" r="${knob/2-1}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="${sx+w-9}" cy="${sy+h-knob/2-0.5}" r="${knob/2-4}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+  </g>`;
+}
+
+// GTN 650Xi — screen left, keypad + knob right.
+function gtnWide(w, h) {
+  const sx = -w/2, sy = -h/2, m = 2.2;
+  const W = w*0.58, H = h-2*m, X = sx+m, Y = sy+m;
+  const cx0 = X+W+3, cols = 3, rows = 2;
+  const kw = (w-(m+W)-m-12)/cols, kh = H/rows-1.5;
+  let keys = '';
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+    keys += `<rect x="${cx0+c*(kw+0.8)}" y="${Y+r*(kh+2)}" width="${kw}" height="${kh}" rx="0.8" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>`;
+  return `<g>
+    ${avHousing(w, h)}
+    <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#04130f"/>
+    ${mfdMap(X, Y, W, H)}
+    ${keys}
+    <circle cx="${sx+w-7.5}" cy="${sy+h-9}" r="6" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+    <circle cx="${sx+w-7.5}" cy="${sy+h-9}" r="3" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+  </g>`;
+}
+
+// Short radio/transponder strip — digital readout + buttons + knob.
+function radioStrip(w, h, lines) {
+  const sx = -w/2, sy = -h/2, m = 1.8, dispW = w*0.46, dispH = h-2*m;
+  const fs = lines.length > 1 ? dispH*0.36 : dispH*0.56;
+  const txt = lines.map((l, i) => {
+    const y = lines.length === 1 ? sy+m+dispH*0.5+fs*0.36 : sy+m+dispH*(i+0.5)/lines.length+fs*0.34;
+    return `<text x="${sx+m+dispW/2}" y="${y}" text-anchor="middle" font-size="${fs}" fill="${l.c}" font-family="Consolas, monospace" font-weight="bold">${l.t}</text>`;
+  }).join('');
+  const ctlX = sx+m+dispW+2.5, ctlW = w-(m+dispW)-m-9, nb = 4;
+  const btns = Array.from({length: nb}, (_, i) =>
+    `<rect x="${ctlX+i*(ctlW/nb)}" y="${sy+m+0.8}" width="${ctlW/nb-1}" height="${dispH-1.6}" rx="0.6" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>`).join('');
+  return `<g>
+    ${avHousing(w, h)}
+    <rect x="${sx+m}" y="${sy+m}" width="${dispW}" height="${dispH}" rx="1" fill="#04070a" stroke="#1c2430" stroke-width="0.3"/>
+    ${txt}${btns}
+    <circle cx="${sx+w-5}" cy="0" r="${Math.min(h*0.34, 6)}" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
+  </g>`;
+}
+
+// GMA 245 audio panel — row of lit buttons.
+function audioPanel(w, h) {
+  const sx = -w/2, sy = -h/2, m = 2, labels = ['COM1','COM2','NAV','MKR','INT','PA'];
+  const n = labels.length, step = (w-2*m)/n, bw = step-1.2;
+  const btns = labels.map((L, i) => `<g>
+    <rect x="${sx+m+i*step}" y="${sy+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#13241b" stroke="#2f5a44" stroke-width="0.3"/>
+    <text x="${sx+m+i*step+bw/2}" y="${1.4}" text-anchor="middle" font-size="${h*0.2}" fill="#37c46a" font-family="Arial">${L}</text>
+  </g>`).join('');
+  return `<g>${avHousing(w, h)}${btns}</g>`;
+}
+
+const g5      = () => efisRound(86, 91, 'GARMIN G5');
+const gi275   = () => efisRound(86, 86, 'GI 275');
+const av30    = () => efisRound(86, 86, 'AV-30');
+const gtn750  = () => gtnTall(159, 152);
+const gtn650  = () => gtnWide(159, 67);
+const gtx335  = () => radioStrip(160, 43, [{ t: '1200', c: '#19d27a' }]);
+const gtr205  = () => radioStrip(159, 34, [{ t: '118.00', c: '#19d27a' }, { t: '121.50', c: '#7f868d' }]);
+const gma245  = () => audioPanel(159, 33);
+
+const SPRUCE = 'Aircraft Spruce';
+const L = {
+  g3x:    'https://www.aircraftspruce.com/catalog/avpages/garming3xtouch450.php',
+  g5:     'https://www.aircraftspruce.com/catalog/avpages/garmin-g5.php',
+  gi275:  'https://www.aircraftspruce.com/catalog/avpages/garmin_gi275cdimfd.php',
+  av30:   'https://www.aircraftspruce.com/catalog/inpages/uavionix_av-30.php',
+  gtn750: 'https://www.aircraftspruce.com/catalog/avpages/ngar750.php',
+  gtn650: 'https://www.aircraftspruce.com/catalog/avpages/ngar650.php',
+  gtx335: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtx335promo.php',
+  gtr205: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtr205.php',
+  gma245: 'https://www.garmin.com/en-US/c/aviation/audio-panels-radios/',
+  hdx:    'https://www.aircraftspruce.com/catalog/avpages/dynonskyview-hdx.php',
+  eagle:  'https://www.aircraftspruce.com/catalog/inpages/aoaeaglekit.php',
+};
+
 /* -------------------------------------------------------------------------- */
 
 // weight is in pounds. For the idealized instruments these are representative
-// averages (real units vary by make/model); the glass weights are Garmin's.
+// averages (real units vary by make/model); real units list make/model + a link.
 const CATALOG = [
   { id: 'ai',  name: 'Attitude Indicator', category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.6, svg: attitude },
   { id: 'dg',  name: 'Directional Gyro',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.8, svg: dg },
@@ -538,11 +657,27 @@ const CATALOG = [
   { id: 'vsi', name: 'Vertical Speed',     category: '3⅛″ Round', w: BZ, h: BZ, weight: 0.7, svg: vsi },
   { id: 'tc',  name: 'Turn Coordinator',   category: '3⅛″ Round', w: BZ, h: BZ, weight: 1.2, svg: turn },
   { id: 'lri',       name: 'Lift Reserve Indicator (2¼″)',  category: 'AoA / Lift', w: 57, h: 57, weight: 0.5, svg: lri },
-  { id: 'aoaeagle',  name: 'AoA — Alpha Systems (chevron)',  category: 'AoA / Lift', w: 38, h: 66, weight: 0.3, svg: aoaEagle },
-  { id: 'aoaladder', name: 'AoA — LED ladder (Dynon/Garmin)', category: 'AoA / Lift', w: 32, h: 64, weight: 0.3, svg: aoaLadder },
-  { id: 'gdu460', name: 'G3X Touch — GDU 460 (10″)',          category: 'Garmin Glass', w: 275.5, h: 198.6, weight: 4.6,  svg: gdu460 },
-  { id: 'gdu450', name: 'G3X Touch — GDU 450 (7″ landscape)', category: 'Garmin Glass', w: 198.6, h: 152.7, weight: 2.69, svg: gdu450 },
-  { id: 'gdu470', name: 'G3X Touch — GDU 470 (7″ portrait)',  category: 'Garmin Glass', w: 152.7, h: 198.6, weight: 2.66, svg: gdu470 },
+  { id: 'aoaeagle',  name: 'AoA — Alpha Systems Eagle',      category: 'AoA / Lift', w: 38, h: 66, weight: 0.3, svg: aoaEagle, link: L.eagle, vendor: SPRUCE },
+  { id: 'aoaladder', name: 'AoA — LED ladder (generic)',     category: 'AoA / Lift', w: 32, h: 64, weight: 0.3, svg: aoaLadder },
+
+  // Real electronic flight instruments (3⅛″ replacements)
+  { id: 'g5',    name: 'Garmin G5',            category: 'Electronic Flight Instruments', w: 86, h: 91, weight: 0.83, svg: g5,    link: L.g5,    vendor: SPRUCE },
+  { id: 'gi275', name: 'Garmin GI 275',        category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.85, svg: gi275, link: L.gi275, vendor: SPRUCE },
+  { id: 'av30',  name: 'uAvionix AV-30-E',     category: 'Electronic Flight Instruments', w: 86, h: 86, weight: 0.5,  svg: av30,  link: L.av30,  vendor: SPRUCE },
+
+  // Real nav / comm / transponder / audio (6.25″ standard width)
+  { id: 'gtn750', name: 'Garmin GTN 750Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 152, weight: 5.5, svg: gtn750, link: L.gtn750, vendor: SPRUCE },
+  { id: 'gtn650', name: 'Garmin GTN 650Xi',    category: 'Nav / Comm / Transponder', w: 159, h: 67,  weight: 3.0, svg: gtn650, link: L.gtn650, vendor: SPRUCE },
+  { id: 'gtr205', name: 'Garmin GTR 205 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.5, svg: gtr205, link: L.gtr205, vendor: SPRUCE },
+  { id: 'gtx335', name: 'Garmin GTX 335 (XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 1.7, svg: gtx335, link: L.gtx335, vendor: SPRUCE },
+  { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, svg: gma245, link: L.gma245, vendor: 'Garmin' },
+
+  // Glass displays (all real)
+  { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  svg: gdu460, link: L.g3x, vendor: SPRUCE },
+  { id: 'gdu450', name: 'Garmin G3X — GDU 450 (7″ landscape)', category: 'Glass Displays', w: 198.6, h: 152.7, weight: 2.69, svg: gdu450, link: L.g3x, vendor: SPRUCE },
+  { id: 'gdu470', name: 'Garmin G3X — GDU 470 (7″ portrait)',  category: 'Glass Displays', w: 152.7, h: 198.6, weight: 2.66, svg: gdu470, link: L.g3x, vendor: SPRUCE },
+  { id: 'hdx1100', name: 'Dynon SkyView HDX (10″)',            category: 'Glass Displays', w: 264, h: 172, weight: 3.6, svg: dynonHDX1100, link: L.hdx, vendor: SPRUCE },
+  { id: 'hdx800',  name: 'Dynon SkyView HDX (7″)',             category: 'Glass Displays', w: 194, h: 142, weight: 2.0, svg: dynonHDX800,  link: L.hdx, vendor: SPRUCE },
 ];
 
 const CATALOG_BY_ID = Object.fromEntries(CATALOG.map(i => [i.id, i]));

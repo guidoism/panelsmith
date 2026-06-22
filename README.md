@@ -45,14 +45,20 @@ nudge · `Alt`-drag free placement · `Esc` deselect.
 - **AoA / Lift** indicators (three styles): Lift Reserve Indicator (2¼″ round needle
   gauge), Alpha Systems "Eagle" chevron + donut display, and a Dynon/Garmin-style LED
   ladder.
-- **Garmin G3X Touch glass** (real bezel sizes, faithful PFD/MFD layout in SVG): GDU 460
-  (10″, 275.5 × 198.6 mm), GDU 450 (7″ landscape, 198.6 × 152.7 mm), and GDU 470 (7″
-  portrait, 152.7 × 198.6 mm).
 
-Each item carries a **weight** (lb) — Garmin's published figures for the glass, and
-representative averages for the idealized instruments (real units vary by make/model). The
-inspector shows a live **item count + total weight** for the panel; per-item weights
-appear in the palette and on the selected instrument.
+Idealized instruments are great for early sketching. When you're ready to spec real
+hardware, the **real, buyable** units carry accurate sizes/weights and a purchase link
+(shown as a "View / buy at …" link on the selected instrument, and a ↗ badge in the
+palette):
+
+- **Electronic Flight Instruments**: Garmin G5, Garmin GI 275, uAvionix AV-30-E.
+- **Nav / Comm / Transponder**: Garmin GTN 750Xi, GTN 650Xi, GTR 205 (com), GTX 335
+  (transponder), GMA 245 (audio) — at the real 6.25″ stack width.
+- **Glass Displays**: Garmin G3X (GDU 460 / 450 / 470) and Dynon SkyView HDX (10″ / 7″).
+
+Each item carries a **weight** (lb) — manufacturers' published figures for the real units,
+representative averages for the idealized ones. The inspector shows a live **item count +
+total weight** for the panel; per-item weights appear in the palette and on the selection.
 
 ## Airspeed V-speeds
 

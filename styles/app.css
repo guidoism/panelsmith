@@ -176,6 +176,13 @@ body { display: flex; flex-direction: column; }
 .palette-item:hover { border-color: var(--accent-dim); background: #20283a; }
 .palette-item:active { cursor: grabbing; }
 .palette-item.full { grid-column: 1 / -1; }
+.palette-item { position: relative; }
+.buy-badge {
+  position: absolute; top: 4px; right: 5px;
+  font-size: 10px; line-height: 1; color: var(--accent);
+  background: rgba(74,168,255,.12); border: 1px solid rgba(74,168,255,.35);
+  border-radius: 4px; padding: 1px 3px;
+}
 .palette-thumb {
   height: 56px;
   display: flex; align-items: center; justify-content: center;
@@ -237,7 +244,12 @@ body { display: flex; flex-direction: column; }
 .vs-grid sub { color: var(--text-mute); }
 .vs-hint { margin: 9px 0 0; font-size: 9.5px; color: var(--text-mute); line-height: 1.5; }
 
-.selection-name { font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.selection-name { font-weight: 600; margin-bottom: 4px; color: var(--text); }
+.buy-link {
+  display: inline-block; margin-bottom: 8px; font-size: 11px;
+  color: var(--accent); text-decoration: none;
+}
+.buy-link:hover { text-decoration: underline; }
 .coord-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 .coord-grid label { font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
 .coord-input { width: 100%; }
