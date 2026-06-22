@@ -659,6 +659,165 @@ function apController(w, h) {
   </g>`;
 }
 
+/* ----------------------------------------------------------------------------
+ * Panel furniture — switches, breakers, knobs, vents, placards. Generic /
+ * idealized (no purchase link); pure parametric SVG centered on origin. Sizes
+ * here must match the catalog w/h so the hit area and thumbnails line up.
+ * -------------------------------------------------------------------------- */
+function selRect(w, h, rx = 2) {
+  return `<rect class="sel-outline" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${rx}"/>`;
+}
+
+// Toggle (bat-handle) switch.
+function toggleSwitch() {
+  return `<g>${selRect(13, 20)}
+    <circle cy="2" r="5.2" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
+    <circle cy="2" r="3.2" fill="#26282c"/>
+    <g transform="rotate(-14 0 2)">
+      <rect x="-1.5" y="-9" width="3" height="11.5" rx="1.5" fill="#cfd4d9" stroke="#8a9097" stroke-width="0.3"/>
+      <circle cx="0" cy="-9" r="2.1" fill="#eef1f4" stroke="#9aa0a6" stroke-width="0.3"/>
+    </g></g>`;
+}
+
+// Rocker switch (green tell-tale).
+function rockerSwitch() {
+  const w = 13, h = 18;
+  return `<g>${selRect(w, h)}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="2" fill="#15171a" stroke="#000" stroke-width="0.6"/>
+    <rect x="${-w/2+1.4}" y="${-h/2+1.4}" width="${w-2.8}" height="${h/2-1.6}" rx="1.4" fill="#2b2f35"/>
+    <rect x="${-w/2+1.4}" y="0.2" width="${w-2.8}" height="${h/2-1.6}" rx="1.4" fill="#0e1013"/>
+    <circle cx="0" cy="${-h/4}" r="1.1" fill="#1faa4b"/></g>`;
+}
+
+// Split master / alternator rocker (red).
+function splitRocker() {
+  const w = 22, h = 20;
+  const one = (cx, lab) => `<g transform="translate(${cx} 1)">
+    <rect x="-4.5" y="-7" width="9" height="15" rx="1.6" fill="#15171a" stroke="#000" stroke-width="0.5"/>
+    <rect x="-3.3" y="-5.6" width="6.6" height="5.8" rx="1" fill="#b02a2a"/>
+    <rect x="-3.3" y="0.6" width="6.6" height="5.8" rx="1" fill="#3a1416"/>
+    <text x="0" y="-8.4" text-anchor="middle" font-size="2.8" fill="#b9bfc5" font-family="Arial">${lab}</text></g>`;
+  return `<g>${selRect(w, h)}${one(-5.5, 'BAT')}${one(5.5, 'ALT')}</g>`;
+}
+
+// Magneto / ignition rotary (OFF-L-R-BOTH-START).
+function magSwitch() {
+  const sz = 30, r = 11;
+  const labs = [['OFF', -100], ['L', -50], ['R', 0], ['BOTH', 50], ['START', 105]];
+  const txt = labs.map(([t, a]) => { const [x, y] = pol(r + 4, a); return `<text x="${x}" y="${y+1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="Arial">${t}</text>`; }).join('');
+  const tk = labs.map(([, a]) => { const [x1, y1] = pol(r + 1.4, a), [x2, y2] = pol(r - 0.4, a); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9aa0a6" stroke-width="0.5"/>`; }).join('');
+  return `<g>${selRect(sz, sz, sz/2)}
+    <circle r="${r+3}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.6"/>
+    ${tk}${txt}
+    <circle r="${r-2}" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
+    <g transform="rotate(50)"><rect x="-1" y="${-(r-1)}" width="2" height="${r-3}" rx="1" fill="#d7dce1"/></g>
+    <circle r="2" fill="#3a3d42"/></g>`;
+}
+
+// Push button (starter / generic).
+function pushButton(color = '#b02a2a', text = 'START') {
+  const sz = 20, r = 8;
+  return `<g>${selRect(sz, sz, sz/2)}
+    <circle r="${r+1.4}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.5"/>
+    <circle r="${r}" fill="${color}" stroke="#000" stroke-width="0.4"/>
+    <circle r="${r}" fill="url(#glassGloss)"/>
+    <text x="0" y="1.4" text-anchor="middle" font-size="3" fill="#fff" font-family="Arial" font-weight="bold">${text}</text></g>`;
+}
+
+// Push-pull circuit breaker.
+function breaker(rating = '5A') {
+  const w = 11, h = 15;
+  return `<g>${selRect(w, h)}
+    <circle cy="-1" r="4.6" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
+    <circle cy="-1" r="3" fill="#1a1c1f" stroke="#3a3d42" stroke-width="0.3"/>
+    <rect x="-3" y="-2.2" width="6" height="2.4" rx="0.6" fill="#0e1013"/>
+    <text x="0" y="6.6" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="Arial">${rating}</text></g>`;
+}
+
+// Rotary dimmer / rheostat knob.
+function dimmerKnob() {
+  const sz = 20, r = 8;
+  const ticks = [...Array(9)].map((_, i) => { const a = -120 + i * 30; const [x1, y1] = pol(r + 2.4, a), [x2, y2] = pol(r + 1.2, a); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6b7178" stroke-width="0.4"/>`; }).join('');
+  return `<g>${selRect(sz, sz, sz/2)}${ticks}
+    <circle r="${r+1}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.5"/>
+    <circle r="${r}" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.4"/>
+    <rect x="-0.7" y="${-r}" width="1.4" height="4" rx="0.7" fill="#d7dce1"/></g>`;
+}
+
+// Dual USB charge port.
+function usbPort() {
+  const w = 30, h = 14;
+  const slot = (cy) => `<rect x="-7" y="${cy-1.6}" width="14" height="3.2" rx="0.4" fill="#0a0c10" stroke="#3a3d42" stroke-width="0.3"/><rect x="-6" y="${cy-0.4}" width="4" height="0.8" fill="#2f6fc4"/>`;
+  return `<g>${selRect(w, h)}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="2" fill="#15171a" stroke="#000" stroke-width="0.6"/>
+    ${slot(-3.4)}${slot(3.4)}</g>`;
+}
+
+// Eyeball (NACA) air vent.
+function eyeballVent() {
+  const R = 26, br = 22, bz = 13;
+  const slats = [...Array(4)].map((_, i) => { const a = i * 45; const [x1, y1] = pol(bz - 1, a), [x2, y2] = pol(bz - 1, a + 180); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('');
+  return `<g>${selRect(R*2, R*2, R)}
+    <circle r="${R-1}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
+    <circle r="${br}" fill="#0c0d0f" stroke="#26282c" stroke-width="0.6"/>
+    <circle r="${bz}" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
+    <circle r="${bz}" fill="url(#glassGloss)"/>
+    <g stroke="#3a3d42" stroke-width="0.5">${slats}</g>
+    <circle cx="-3" cy="-3" r="3" fill="#000" opacity="0.5"/></g>`;
+}
+
+// Push-pull cable control (cabin heat / air, etc.) — label via a placard.
+function cableControl(color = '#1a1c1f') {
+  const sz = 20, r = 7;
+  return `<g>${selRect(sz, sz, 3)}
+    <circle r="${r+2}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.5"/>
+    <circle r="${r}" fill="${color}" stroke="#000" stroke-width="0.5"/>
+    <circle r="${r}" fill="url(#glassGloss)"/>
+    <circle r="2.4" fill="#0a0a0b"/></g>`;
+}
+
+// Annunciator / warning-light cluster.
+function annunciator() {
+  const w = 64, h = 16, labs = [['OIL', '#e02424'], ['VOLTS', '#f2c200'], ['FUEL', '#e02424'], ['CANOPY', '#f2c200']];
+  const n = labs.length, step = (w - 4) / n;
+  const cells = labs.map(([t, c], i) => `<g transform="translate(${-w/2+2+step*(i+0.5)} 0)">
+    <rect x="${-step/2+1}" y="-6" width="${step-2}" height="12" rx="1.2" fill="#0e1013" stroke="#26282c" stroke-width="0.3"/>
+    <text x="0" y="1.6" text-anchor="middle" font-size="3.2" fill="${c}" font-family="Arial" font-weight="bold">${t}</text></g>`).join('');
+  return `<g>${selRect(w, h)}<rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="2" fill="#15171a" stroke="#000" stroke-width="0.6"/>${cells}</g>`;
+}
+
+// N-number placard (placeholder text — per-instance editable labels are a
+// planned follow-up).
+function nNumberPlacard() {
+  const w = 70, h = 16;
+  return `<g>${selRect(w, h)}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#0c0d0f" stroke="#3a3d42" stroke-width="0.4"/>
+    <text x="0" y="3.4" text-anchor="middle" font-size="9" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="2">N1234</text></g>`;
+}
+
+// Generic warning placard.
+function placard(text = 'EXPERIMENTAL') {
+  const w = 56, h = 12;
+  return `<g>${selRect(w, h)}
+    <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.2" fill="#b02a2a" stroke="#5a1416" stroke-width="0.4"/>
+    <text x="0" y="2.4" text-anchor="middle" font-size="5.2" fill="#fff" font-family="Arial" font-weight="bold" letter-spacing="0.6">${text}</text></g>`;
+}
+
+const swToggle = () => toggleSwitch();
+const swRocker = () => rockerSwitch();
+const swSplit  = () => splitRocker();
+const swMag    = () => magSwitch();
+const btnStart = () => pushButton('#b02a2a', 'START');
+const cb5      = () => breaker('5A');
+const knobDim  = () => dimmerKnob();
+const usb2     = () => usbPort();
+const vent     = () => eyeballVent();
+const ctlHeat  = () => cableControl('#b02a2a');
+const ctlAir   = () => cableControl('#1a1c1f');
+const annun    = () => annunciator();
+const placardN = () => nNumberPlacard();
+const placardX = () => placard('EXPERIMENTAL');
+
 const g5      = () => efisRound(86, 91, 'GARMIN G5');
 const gi275   = () => efisRound(86, 86, 'GI 275');
 const av30    = () => efisRound(86, 86, 'AV-30');
@@ -728,6 +887,26 @@ const CATALOG = [
 
   // Autopilot
   { id: 'gmc507', name: 'Garmin GMC 507 (AP control)', category: 'Autopilot', w: 159, h: 53, weight: 0.68, amps: 0.2, svg: gmc507, link: L.gmc507, vendor: SPRUCE },
+
+  // Switches & controls (generic / idealized — amps are 0; they pass power, not draw it)
+  { id: 'sw-toggle', name: 'Toggle switch',          category: 'Switches & Controls', w: 13, h: 20, weight: 0.05, amps: 0,   svg: swToggle },
+  { id: 'sw-rocker', name: 'Rocker switch',          category: 'Switches & Controls', w: 13, h: 18, weight: 0.05, amps: 0,   svg: swRocker },
+  { id: 'sw-split',  name: 'Master/Alt split rocker', category: 'Switches & Controls', w: 22, h: 20, weight: 0.1,  amps: 0,   svg: swSplit },
+  { id: 'sw-mag',    name: 'Magneto / ignition switch', category: 'Switches & Controls', w: 30, h: 30, weight: 0.2, amps: 0,  svg: swMag },
+  { id: 'btn-start', name: 'Starter button',         category: 'Switches & Controls', w: 20, h: 20, weight: 0.05, amps: 0,   svg: btnStart },
+  { id: 'cb',        name: 'Circuit breaker',        category: 'Switches & Controls', w: 11, h: 15, weight: 0.05, amps: 0,   svg: cb5 },
+  { id: 'knob-dim',  name: 'Dimmer / rheostat knob', category: 'Switches & Controls', w: 20, h: 20, weight: 0.08, amps: 0,   svg: knobDim },
+  { id: 'usb',       name: 'USB charge port (dual)', category: 'Switches & Controls', w: 30, h: 14, weight: 0.15, amps: 0,   svg: usb2 },
+
+  // Vents & air controls (generic)
+  { id: 'vent',      name: 'Eyeball air vent',       category: 'Vents & Air', w: 52, h: 52, weight: 0.15, amps: 0, svg: vent },
+  { id: 'ctl-heat',  name: 'Cabin heat control',     category: 'Vents & Air', w: 20, h: 20, weight: 0.1,  amps: 0, svg: ctlHeat },
+  { id: 'ctl-air',   name: 'Cabin air control',      category: 'Vents & Air', w: 20, h: 20, weight: 0.1,  amps: 0, svg: ctlAir },
+
+  // Placards & lights (generic)
+  { id: 'annun',     name: 'Annunciator cluster',    category: 'Placards & Lights', w: 64, h: 16, weight: 0.15, amps: 0.1, svg: annun },
+  { id: 'placard-n', name: 'N-number placard',       category: 'Placards & Lights', w: 70, h: 16, weight: 0.02, amps: 0,   svg: placardN },
+  { id: 'placard-x', name: 'Experimental placard',   category: 'Placards & Lights', w: 56, h: 12, weight: 0.02, amps: 0,   svg: placardX },
 
   // Glass displays (all real)
   { id: 'gdu460', name: 'Garmin G3X — GDU 460 (10″)',          category: 'Glass Displays', w: 275.5, h: 198.6, weight: 4.6,  amps: 1.8, svg: gdu460, link: L.g3x, vendor: SPRUCE },
