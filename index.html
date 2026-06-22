@@ -99,10 +99,22 @@
         </p>
       </div>
 
+      <div class="insp-section" id="bus-section">
+        <label class="field-label">Electrical buses</label>
+        <ul id="bus-breakdown" class="bus-list"><!-- populated by JS --></ul>
+        <p class="bus-hint">
+          Buses follow <i>The AeroElectric Connection</i>. The <b>endurance bus</b> is your
+          battery-only minimum equipment list (Nuckolls' ME²L) — what keeps flying after an
+          alternator failure.
+        </p>
+      </div>
+
       <div class="insp-section" id="selection-section" hidden>
         <label class="field-label">Selected instrument</label>
         <div id="selection-name" class="selection-name">—</div>
         <a id="selection-link" class="buy-link" target="_blank" rel="noopener" hidden></a>
+        <label class="field-label" for="sel-bus">Bus</label>
+        <select id="sel-bus" class="mini-select bus-select"></select>
         <div class="coord-grid">
           <label>X <input id="sel-x" type="number" step="1" class="coord-input"> mm</label>
           <label>Y <input id="sel-y" type="number" step="1" class="coord-input"> mm</label>

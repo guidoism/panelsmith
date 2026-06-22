@@ -25,6 +25,7 @@ class Placement {
       instId: it.instId,
       x: it.x_mm ?? it.x ?? 0,
       y: it.y_mm ?? it.y ?? 0,
+      bus: it.bus || 'main',
     }));
     this.selected = null;
     this._renderAll();
@@ -33,7 +34,7 @@ class Placement {
 
   serialize() {
     return this.items.map(it => ({
-      instId: it.instId, x_mm: Math.round(it.x), y_mm: Math.round(it.y),
+      instId: it.instId, x_mm: Math.round(it.x), y_mm: Math.round(it.y), bus: it.bus || 'main',
     }));
   }
 
@@ -150,8 +151,8 @@ class Placement {
   refresh() { this._renderAll(); }
 
   // ---- commands ----------------------------------------------------------
-  add(instId, x, y) {
-    const it = { uid: this._uid(), instId, x: Math.round(x), y: Math.round(y) };
+  add(instId, x, y, bus = 'main') {
+    const it = { uid: this._uid(), instId, x: Math.round(x), y: Math.round(y), bus };
     this.items.push(it);
     this.stage.instLayer.append(this._buildNode(it));
     this.select(it.uid);
@@ -190,7 +191,13 @@ class Placement {
 
   duplicateSelected() {
     const it = this._selectedItem(); if (!it) return;
-    this.add(it.instId, it.x + 12, it.y + 12);
+    this.add(it.instId, it.x + 12, it.y + 12, it.bus);
+  }
+
+  setSelectedBus(bus) {
+    const it = this._selectedItem(); if (!it) return;
+    it.bus = bus;
+    if (this.onChange) this.onChange();
   }
 
   setSelectedPos(x, y) {

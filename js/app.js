@@ -8,6 +8,17 @@ const { Stage, PANEL_VIEWBOX: P, Placement, DesignRepo, blankDesign,
 const $ = (sel) => document.querySelector(sel);
 const PANEL_CENTER = { x: P.x + P.w / 2, y: P.y + P.h * 0.32 }; // upper-centre drop point
 
+// Electrical buses, per Bob Nuckolls' *The AeroElectric Connection*. Order =
+// display order. `main` is the default for newly placed instruments.
+const BUSES = [
+  { id: 'main',      name: 'Main bus',            note: 'Alternator + battery via the master contactor; normal-ops loads.' },
+  { id: 'endurance', name: 'Endurance bus (E-bus)', note: 'Minimum equipment to finish the flight on battery alone (ME²L).' },
+  { id: 'battery',   name: 'Battery bus',         note: 'Always hot — fed straight from the battery, independent of the master.' },
+  { id: 'avionics',  name: 'Avionics bus',        note: 'Legacy switched avionics feed (Nuckolls prefers a diode-fed E-bus).' },
+];
+const BUS_BY_ID = Object.fromEntries(BUSES.map(b => [b.id, b]));
+APP.BUSES = BUSES;
+
 const repo = new DesignRepo();
 let stage, placement;
 let current = null;     // active design object
@@ -175,6 +186,15 @@ function wireTopbar() {
 function wireInspector() {
   $('#design-notes').addEventListener('input', () => markDirty(true));
 
+  const busSel = $('#sel-bus');
+  busSel.replaceChildren();
+  for (const b of BUSES) {
+    const opt = document.createElement('option');
+    opt.value = b.id; opt.textContent = b.name; opt.title = b.note;
+    busSel.append(opt);
+  }
+  busSel.addEventListener('change', (e) => placement.setSelectedBus(e.target.value));
+
   $('#sel-x').addEventListener('change', (e) =>
     placement.setSelectedPos(parseFloat(e.target.value), NaN));
   $('#sel-y').addEventListener('change', (e) =>
@@ -192,6 +212,7 @@ function renderSelection(it) {
   sec.hidden = false;
   const inst = CATALOG_BY_ID[it.instId];
   $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb · ${inst.amps} A` : it.instId;
+  $('#sel-bus').value = it.bus || 'main';
   $('#sel-x').value = Math.round(it.x);
   $('#sel-y').value = Math.round(it.y);
 
@@ -205,13 +226,42 @@ function renderSelection(it) {
   }
 }
 
-// Running tally of placed-instrument count, total weight, and electrical load.
+// Running tally of placed-instrument count, total weight, and electrical load,
+// plus a per-bus breakdown of weight/amps (item 1 of the electrical-design roadmap).
 function updateSummary() {
   const items = placement.items;
   const w = items.reduce((s, it) => s + (CATALOG_BY_ID[it.instId]?.weight || 0), 0);
   const a = items.reduce((s, it) => s + (CATALOG_BY_ID[it.instId]?.amps || 0), 0);
   $('#panel-summary').textContent =
     `${items.length} item${items.length === 1 ? '' : 's'} · ≈ ${w.toFixed(1)} lb · ≈ ${a.toFixed(1)} A @ 12 V`;
+  renderBusBreakdown(items);
+}
+
+// Sub-totals per bus, shown only for buses that actually carry something.
+function renderBusBreakdown(items) {
+  const tally = {};
+  for (const it of items) {
+    const inst = CATALOG_BY_ID[it.instId]; if (!inst) continue;
+    const id = BUS_BY_ID[it.bus] ? it.bus : 'main';
+    const t = tally[id] || (tally[id] = { n: 0, w: 0, a: 0 });
+    t.n++; t.w += inst.weight || 0; t.a += inst.amps || 0;
+  }
+  const list = $('#bus-breakdown');
+  list.replaceChildren();
+  const used = BUSES.filter(b => tally[b.id]);
+  if (!used.length) {
+    list.innerHTML = `<li class="designs-empty">No instruments assigned yet.</li>`;
+    return;
+  }
+  for (const b of used) {
+    const t = tally[b.id];
+    const li = document.createElement('li');
+    li.className = 'bus-row';
+    li.innerHTML =
+      `<span class="b-name">${escapeHTML(b.name)}<small>${t.n} item${t.n === 1 ? '' : 's'}</small></span>
+       <span class="b-load">${t.w.toFixed(1)} lb · ${t.a.toFixed(1)} A</span>`;
+    list.append(li);
+  }
 }
 
 /* ------------------------------- V-speeds -------------------------------- */
