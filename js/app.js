@@ -197,6 +197,15 @@ function wireInspector() {
 
   $('#sel-text').addEventListener('input', (e) => placement.setSelectedText(e.target.value));
 
+  const fontSel = $('#sel-font');
+  fontSel.replaceChildren();
+  for (const f of (APP.FONTS || [])) {
+    const opt = document.createElement('option');
+    opt.value = f.family; opt.textContent = f.name;
+    fontSel.append(opt);
+  }
+  fontSel.addEventListener('change', (e) => placement.setSelectedFont(e.target.value));
+
   $('#sel-x').addEventListener('change', (e) =>
     placement.setSelectedPos(parseFloat(e.target.value), NaN));
   $('#sel-y').addEventListener('change', (e) =>
@@ -215,11 +224,16 @@ function renderSelection(it) {
   const inst = CATALOG_BY_ID[it.instId];
   $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb · ${inst.amps} A` : it.instId;
 
-  // Editable label text — only for instruments that declare a default `text`.
+  // Editable label text + font — only for instruments that declare a default `text`.
   const editable = inst && inst.text !== undefined;
   $('#sel-text').hidden = !editable;
   $('#sel-text-label').hidden = !editable;
-  if (editable) $('#sel-text').value = it.text ?? inst.text;
+  $('#sel-font').hidden = !editable;
+  $('#sel-font-label').hidden = !editable;
+  if (editable) {
+    $('#sel-text').value = it.text ?? inst.text;
+    $('#sel-font').value = it.font || (APP.FONTS && APP.FONTS[0] && APP.FONTS[0].family) || 'B612';
+  }
 
   $('#sel-bus').value = it.bus || 'main';
   $('#sel-x').value = Math.round(it.x);

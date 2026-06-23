@@ -27,6 +27,7 @@ class Placement {
       y: it.y_mm ?? it.y ?? 0,
       bus: it.bus || 'main',
       text: it.text,
+      font: it.font,
     }));
     this.selected = null;
     this._renderAll();
@@ -37,6 +38,7 @@ class Placement {
     return this.items.map(it => ({
       instId: it.instId, x_mm: Math.round(it.x), y_mm: Math.round(it.y), bus: it.bus || 'main',
       ...(it.text !== undefined ? { text: it.text } : {}),
+      ...(it.font !== undefined ? { font: it.font } : {}),
     }));
   }
 
@@ -58,7 +60,7 @@ class Placement {
     }
     // transparent hit area covering full bounds so the whole unit is draggable
     const hit = `<rect class="hit" x="${-inst.w/2}" y="${-inst.h/2}" width="${inst.w}" height="${inst.h}"/>`;
-    g.innerHTML = inst.svg(it.text) + hit;
+    g.innerHTML = inst.svg(it.text, it.font) + hit;
     this._wireDrag(g, it);
     return g;
   }
@@ -194,7 +196,9 @@ class Placement {
   duplicateSelected() {
     const it = this._selectedItem(); if (!it) return;
     const copy = this.add(it.instId, it.x + 12, it.y + 12, it.bus);
-    if (it.text !== undefined) { copy.text = it.text; this._rebuildNode(copy); }
+    if (it.text !== undefined) copy.text = it.text;
+    if (it.font !== undefined) copy.font = it.font;
+    if (it.text !== undefined || it.font !== undefined) this._rebuildNode(copy);
   }
 
   setSelectedBus(bus) {
@@ -207,6 +211,13 @@ class Placement {
   setSelectedText(text) {
     const it = this._selectedItem(); if (!it) return;
     it.text = text;
+    this._rebuildNode(it);
+    if (this.onChange) this.onChange();
+  }
+
+  setSelectedFont(family) {
+    const it = this._selectedItem(); if (!it) return;
+    it.font = family;
     this._rebuildNode(it);
     if (this.onChange) this.onChange();
   }

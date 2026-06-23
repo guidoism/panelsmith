@@ -790,30 +790,30 @@ function annunciator() {
 }
 
 // N-number placard — editable text (default shown).
-function nNumberPlacard(text = 'N1234') {
+function nNumberPlacard(text = 'N1234', family = 'B612') {
   const w = 70, h = 16, t = String(text);
   const fs = Math.max(4, Math.min(9, (w - 8) / (t.length * 0.66 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#0c0d0f" stroke="#3a3d42" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="2">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'${family}', sans-serif" font-weight="bold" letter-spacing="2">${esc(t)}</text></g>`;
 }
 
 // Warning / instruction placard — editable text.
-function placard(text = 'EXPERIMENTAL') {
+function placard(text = 'EXPERIMENTAL', family = 'B612') {
   const w = 56, h = 12, t = String(text);
   const fs = Math.max(3, Math.min(5.2, (w - 5) / (t.length * 0.6 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.2" fill="#b02a2a" stroke="#5a1416" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#fff" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="0.6">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#fff" font-family="'${family}', sans-serif" font-weight="bold" letter-spacing="0.6">${esc(t)}</text></g>`;
 }
 
 // Generic engraved label strip — editable text, for annotating switches/breakers.
-function labelStrip(text = 'LABEL') {
+function labelStrip(text = 'LABEL', family = 'B612') {
   const w = 48, h = 11, t = String(text);
   const fs = Math.max(3, Math.min(5.5, (w - 5) / (t.length * 0.62 || 1)));
   return `<g>${selRect(w, h, 1.5)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#16181c" stroke="#2a2c30" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="0.4">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'${family}', sans-serif" font-weight="bold" letter-spacing="0.4">${esc(t)}</text></g>`;
 }
 
 const swToggle = () => toggleSwitch();
@@ -828,9 +828,9 @@ const vent     = () => eyeballVent();
 const ctlHeat  = () => cableControl('#b02a2a');
 const ctlAir   = () => cableControl('#1a1c1f');
 const annun    = () => annunciator();
-const placardN = (t) => nNumberPlacard(t);
-const placardX = (t) => placard(t);
-const labelTag = (t) => labelStrip(t);
+const placardN = (t, f) => nNumberPlacard(t, f);
+const placardX = (t, f) => placard(t, f);
+const labelTag = (t, f) => labelStrip(t, f);
 
 /* ----------------------------------------------------------------------------
  * Engine & fuel monitoring

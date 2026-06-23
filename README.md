@@ -98,9 +98,13 @@ The panel also includes the **generic furniture** every real panel has: toggle /
 master-alt / magneto switches, a starter button, circuit breakers, a dimmer knob, USB
 ports, eyeball air vents, cabin heat/air controls, an annunciator cluster, and a custom
 **Label**, **N-number**, and **experimental** placard. Select a label or placard and type
-your own text in the inspector — handy for annotating switches and breakers. (Labels
-render in Arial for now; see [`docs/typefaces/`](docs/typefaces/) for a specimen of the
-authentic aircraft placard/instrument typefaces we may adopt.)
+your own text in the inspector — handy for annotating switches and breakers — and pick its
+**font**: B612, a condensed gothic (Barlow Semi Condensed), or Spartan.
+
+Instrument text is set in **B612** — the open font Airbus + ENAC designed for cockpit
+displays — with B612 Mono for digital readouts. The fonts are subsetted and embedded (no
+CDN, works offline and in PNG export); see [`docs/typefaces/`](docs/typefaces/) for the
+specimen and [`fonts/`](fonts/) for licensing.
 
 Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 V nominal
 — pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for
