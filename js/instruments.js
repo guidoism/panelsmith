@@ -168,7 +168,7 @@ const ASI_PRESETS = {
   kt:  { unit: 'KNOTS', scaleMin: 40, scaleMax: 220, step: 20, minor: 10,
          vs0: 53, vfe: 87, vs1: 56, vno: 123, vne: 200 },
 };
-let ASI = { ...ASI_PRESETS.mph };
+let ASI = { ...ASI_PRESETS.kt };
 function setASIConfig(cfg) { if (cfg) ASI = { ...ASI, ...cfg }; }
 
 const ASI_A0 = 32, ASI_SWEEP = 296;   // gauge sweep, deg clockwise from top

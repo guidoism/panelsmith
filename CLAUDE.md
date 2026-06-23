@@ -20,16 +20,17 @@ then open the printed URL.
 | `styles/app.css` | All styling |
 | `js/panel-data.js` | The blank panel SVG, inlined as a string on `APP.PANEL_SVG` |
 | `js/instruments.js` | Instrument `CATALOG` + pure-SVG factories + shared gradient `DEFS` |
+| `js/missions.js` | `MISSIONS`, `ARCHITECTURES` (Z-figures), capability map + pure `evaluateMission()` |
 | `js/stage.js` | `Stage`: loads the panel, mm-coordinate canvas, pan/zoom/grid, alignment guides |
 | `js/placement.js` | `Placement`: add/drag/select/delete/order instruments; snapping (`computeSnap`) |
-| `js/designs.js` | `DesignRepo`: localStorage CRUD + JSON import/export; `blankDesign` (includes `vspeeds`) |
+| `js/designs.js` | `DesignRepo`: localStorage CRUD + JSON import/export; `blankDesign` (includes `vspeeds`, `mission`, `architecture`) |
 | `js/export-png.js` | Serialize the stage SVG → canvas → PNG |
 | `js/app.js` | Wires palette, inspector, toolbar, keyboard, V-speeds, design lifecycle |
 
 Scripts share a single global **`APP`** namespace: each file is an IIFE that reads its
 dependencies off `APP` and attaches its exports back onto it. `index.html` loads them in
-dependency order (`panel-data` → `instruments` → `designs` → `stage` → `placement` →
-`export-png` → `app`).
+dependency order (`panel-data` → `font-data` → `instruments` → `missions` → `designs` →
+`stage` → `placement` → `export-png` → `app`).
 
 ## Hard invariants — do not break these
 

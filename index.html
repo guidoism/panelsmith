@@ -65,10 +65,14 @@
     <!-- Right: inspector -->
     <aside id="inspector" class="panel-col">
       <div class="col-header">
-        <h2>Design</h2>
+        <div class="insp-tabs" role="tablist">
+          <button class="insp-tab active" data-tab="design" role="tab">Design</button>
+          <button class="insp-tab" data-tab="mission" role="tab">Mission</button>
+        </div>
         <div id="panel-summary" class="panel-summary">0 items · ≈ 0.0 lb</div>
       </div>
 
+      <div id="tab-design" class="tab-body">
       <div class="insp-section">
         <label class="field-label" for="design-notes">Notes</label>
         <textarea id="design-notes" class="notes" rows="4"
@@ -139,6 +143,39 @@
         </div>
         <ul id="designs-list" class="designs-list"><!-- populated by JS --></ul>
       </div>
+      </div><!-- /#tab-design -->
+
+      <div id="tab-mission" class="tab-body" hidden>
+        <div class="insp-section">
+          <label class="field-label" for="mission-select">Mission profile</label>
+          <select id="mission-select" class="mini-select bus-select"></select>
+          <p id="mission-desc" class="bus-hint"></p>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-subhead">
+            <label class="field-label" for="arch-select">Power architecture</label>
+            <span id="arch-rec" class="muted"></span>
+          </div>
+          <select id="arch-select" class="mini-select bus-select"></select>
+          <p id="arch-desc" class="bus-hint"></p>
+        </div>
+
+        <div class="insp-section grow">
+          <div class="insp-subhead">
+            <label class="field-label">Mission compliance</label>
+            <span id="mission-score" class="muted"></span>
+          </div>
+          <ul id="mission-check" class="check-list"><!-- populated by JS --></ul>
+          <p class="bus-hint">
+            Requirements blend FAR 91.205 with the survivability thinking in
+            <i>The AeroElectric Connection</i>. <b style="color:var(--ok)">✓</b> met ·
+            <b style="color:var(--warn)">!</b> recommended, missing ·
+            <b style="color:var(--danger)">✗</b> required, missing. Guidance only —
+            you decide.
+          </p>
+        </div>
+      </div><!-- /#tab-mission -->
     </aside>
   </main>
 
@@ -149,6 +186,7 @@
   <script src="js/panel-data.js"></script>
   <script src="js/font-data.js"></script>
   <script src="js/instruments.js"></script>
+  <script src="js/missions.js"></script>
   <script src="js/designs.js"></script>
   <script src="js/stage.js"></script>
   <script src="js/placement.js"></script>

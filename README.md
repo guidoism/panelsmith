@@ -112,15 +112,28 @@ Each item carries a **weight** (lb) and a typical **current draw** (amps, at 12 
 — pneumatic gauges draw 0, panel lighting excluded) — manufacturers' published figures for
 the real units, representative averages for the idealized ones. The inspector shows a live
 **item count + total weight + total amps** for the panel; per-item figures appear in the
-palette and on the selection.
+palette and on the selection. Assign each item to an **electrical bus** (Main · Endurance
+/ E-bus · Battery · Avionics) to get per-bus weight/amps sub-totals.
+
+## Missions & electrical architecture
+
+The inspector's **Mission** tab turns the panel into an electrical-design sketch,
+following Bob Nuckolls' *The AeroElectric Connection*: pick a **mission profile** (Day VFR
+— local → Day VFR — busy airspace → Day + Night VFR → Night VFR + IMC survivability → Full
+IFR) and Panelsmith recommends a power **architecture** (Nuckolls' Z-figures: **Z-11**,
+**Z-13/8**, **Z-14**) and checks the placed panel against the mission's equipment live.
+The checklist distinguishes **required** items (FAR 91.205-based) from **recommended**
+ones and flags whether the chosen architecture carries enough redundancy. It **suggests,
+never dictates** — you stay free to ignore it. See [`js/missions.js`](js/missions.js) for
+the profiles and the pure compliance function.
 
 ## Airspeed V-speeds
 
 The ASI colour arcs are driven by the design's V-speeds, defaulting to Van's published
-**RV-8** markings (statute mph): white arc V<sub>S0</sub> 58 → V<sub>FE</sub> 100, green
-V<sub>S1</sub> 64 → V<sub>NO</sub> 142, yellow V<sub>NO</sub> 142 → V<sub>NE</sub> 230,
-red line at V<sub>NE</sub> 230. Edit them (and the scale max) in the inspector, or pick
-the **kt** preset (V<sub>NE</sub> 200, etc.). V-speeds are stored per design, so each
+**RV-8** markings in **knots**: white arc V<sub>S0</sub> 53 → V<sub>FE</sub> 87, green
+V<sub>S1</sub> 56 → V<sub>NO</sub> 123, yellow V<sub>NO</sub> 123 → V<sub>NE</sub> 200,
+red line at V<sub>NE</sub> 200. Edit them (and the scale max) in the inspector, or switch
+to the **mph** preset (V<sub>NE</sub> 230, etc.). V-speeds are stored per design, so each
 aircraft keeps its own.
 
 ## Storage & export
@@ -139,6 +152,7 @@ a shared `APP` global; `index.html` loads them in dependency order.
 |------|----------------|
 | `js/panel-data.js` | The blank panel SVG, inlined as a string (so no `fetch`) |
 | `js/instruments.js` | Instrument catalog; true-mm SVG factories |
+| `js/missions.js` | Mission profiles, Z-figure architectures, pure compliance check |
 | `js/stage.js` | Loads the panel SVG; mm-coordinate stage; pan/zoom/grid |
 | `js/placement.js` | Place / drag / select / order instrument instances |
 | `js/designs.js` | localStorage repository + JSON import/export |

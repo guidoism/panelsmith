@@ -18,7 +18,10 @@ function blankDesign(name = 'Untitled design') {
     schema: SCHEMA, aircraft: 'RV-8',
     id: uid(), name, notes: '',
     createdAt: now, updatedAt: now,
-    vspeeds: APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.mph } : undefined,
+    vspeeds: APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.kt } : undefined,
+    mission: APP.DEFAULT_MISSION || 'vfr-local',
+    architecture: APP.MISSION_BY_ID
+      ? APP.MISSION_BY_ID[APP.DEFAULT_MISSION || 'vfr-local'].arch : 'z11',
     instruments: [],
   };
 }
@@ -73,11 +76,17 @@ class DesignRepo {
       name: (obj.name || 'Imported design') + (this.get(obj.id) ? '' : ''),
       notes: obj.notes || '',
       createdAt: obj.createdAt || now, updatedAt: now,
-      vspeeds: obj.vspeeds || (APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.mph } : undefined),
+      vspeeds: obj.vspeeds || (APP.ASI_PRESETS ? { ...APP.ASI_PRESETS.kt } : undefined),
+      mission: obj.mission || APP.DEFAULT_MISSION || 'vfr-local',
+      architecture: obj.architecture || (APP.MISSION_BY_ID
+        ? APP.MISSION_BY_ID[obj.mission || APP.DEFAULT_MISSION || 'vfr-local']?.arch : undefined) || 'z11',
       instruments: obj.instruments.map(it => ({
         instId: it.instId,
         x_mm: Number(it.x_mm ?? it.x ?? 0),
         y_mm: Number(it.y_mm ?? it.y ?? 0),
+        bus: it.bus || 'main',
+        ...(it.text !== undefined ? { text: it.text } : {}),
+        ...(it.font !== undefined ? { font: it.font } : {}),
       })),
     };
   }

@@ -42,6 +42,7 @@ async function init() {
   buildPalette();
   wireTopbar();
   wireInspector();
+  wireMission();
   wireVspeeds();
   wireToolbar();
   wireKeyboard();
@@ -220,6 +221,7 @@ function wireInspector() {
 function renderSelection(it) {
   const sec = $('#selection-section');
   if (!it) { sec.hidden = true; return; }
+  switchTab('design');   // the selection editor lives on the Design tab
   sec.hidden = false;
   const inst = CATALOG_BY_ID[it.instId];
   $('#selection-name').textContent = inst ? `${inst.name} · ${inst.weight} lb · ${inst.amps} A` : it.instId;
@@ -258,6 +260,7 @@ function updateSummary() {
   $('#panel-summary').textContent =
     `${items.length} item${items.length === 1 ? '' : 's'} · ≈ ${w.toFixed(1)} lb · ≈ ${a.toFixed(1)} A @ 12 V`;
   renderBusBreakdown(items);
+  renderMission();
 }
 
 // Sub-totals per bus, shown only for buses that actually carry something.
@@ -287,13 +290,107 @@ function renderBusBreakdown(items) {
   }
 }
 
+/* -------------------------------- mission -------------------------------- */
+// Roadmap items 3–4: pick a mission profile, get a recommended power
+// architecture, and check the placed panel against it live. "Suggest, don't
+// dictate" — the recommendation is shown, never enforced.
+function switchTab(name) {
+  document.querySelectorAll('.insp-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  $('#tab-design').hidden = name !== 'design';
+  $('#tab-mission').hidden = name !== 'mission';
+}
+
+function wireMission() {
+  document.querySelector('.insp-tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('.insp-tab');
+    if (b) switchTab(b.dataset.tab);
+  });
+
+  const ms = $('#mission-select');
+  ms.replaceChildren();
+  for (const m of APP.MISSIONS) {
+    const o = document.createElement('option');
+    o.value = m.id; o.textContent = m.name;
+    ms.append(o);
+  }
+  ms.addEventListener('change', () => {
+    current.mission = ms.value;
+    // A new mission resets the architecture to that mission's recommendation;
+    // the user can re-override below.
+    current.architecture = APP.MISSION_BY_ID[current.mission].arch;
+    markDirty(true);
+    renderMission();
+  });
+
+  const as = $('#arch-select');
+  as.replaceChildren();
+  for (const a of APP.ARCHITECTURES) {
+    const o = document.createElement('option');
+    o.value = a.id; o.textContent = a.name;
+    as.append(o);
+  }
+  as.addEventListener('change', () => {
+    current.architecture = as.value;
+    markDirty(true);
+    renderMission();
+  });
+}
+
+function renderMission() {
+  if (!current) return;
+  const missionId = current.mission || APP.DEFAULT_MISSION;
+  const archId = current.architecture || APP.MISSION_BY_ID[missionId].arch;
+  $('#mission-select').value = missionId;
+  $('#arch-select').value = archId;
+
+  const rep = APP.evaluateMission(missionId, archId, placement.items);
+  $('#mission-desc').textContent = rep.mission.blurb;
+  $('#arch-desc').textContent = rep.architecture.selected.blurb;
+  $('#arch-rec').textContent = 'rec: ' + shortArch(rep.architecture.recommended);
+  $('#mission-score').textContent = `${rep.hardMet}/${rep.hardTotal} required`;
+
+  const nameOf = (id) => CATALOG_BY_ID[id]?.name || id;
+  const namesOf = (ids) => [...new Set(ids.map(nameOf))].join(', ');
+  const list = $('#mission-check');
+  list.replaceChildren();
+
+  for (const r of rep.requirements) {
+    const cls = r.met ? 'ok' : (r.hard ? 'fail' : 'warn');
+    const mark = r.met ? '✓' : (r.hard ? '✗' : '!');
+    const label = r.min > 1 ? `${r.label} ×${r.min}` : r.label;
+    let detail;
+    if (r.met) detail = namesOf(r.by);
+    else if (r.count > 0) detail = `Have ${r.count} of ${r.min} — ${namesOf(r.by)}`;
+    else detail = r.hard ? 'Required — none placed' : 'Recommended — none placed';
+
+    const li = document.createElement('li');
+    li.className = 'check-row ' + cls;
+    li.innerHTML =
+      `<span class="ck">${mark}</span>
+       <span class="ck-body"><span class="ck-label">${escapeHTML(label)}</span>
+       <span class="ck-detail">${escapeHTML(detail)}</span></span>`;
+    list.append(li);
+  }
+
+  const a = rep.architecture;
+  const li = document.createElement('li');
+  li.className = 'check-row arch ' + (a.met ? 'ok' : 'warn');
+  li.innerHTML =
+    `<span class="ck">${a.met ? '✓' : '!'}</span>
+     <span class="ck-body"><span class="ck-label">Power architecture</span>
+     <span class="ck-detail">${escapeHTML(a.note)}</span></span>`;
+  list.append(li);
+}
+
+function shortArch(a) { return a.name.split(' —')[0]; }
+
 /* ------------------------------- V-speeds -------------------------------- */
 const VS_FIELDS = { vs0: '#vs-vs0', vfe: '#vs-vfe', vs1: '#vs-vs1', vno: '#vs-vno', vne: '#vs-vne', scaleMax: '#vs-max' };
 
 function wireVspeeds() {
   for (const sel of Object.values(VS_FIELDS)) $(sel).addEventListener('input', onVspeedInput);
   $('#vs-unit').addEventListener('change', () => {
-    const preset = APP.ASI_PRESETS[$('#vs-unit').value] || APP.ASI_PRESETS.mph;
+    const preset = APP.ASI_PRESETS[$('#vs-unit').value] || APP.ASI_PRESETS.kt;
     current.vspeeds = { ...preset };
     fillVspeedsUI(current.vspeeds);
     applyVspeeds(current.vspeeds);
@@ -365,7 +462,9 @@ function bootDesign() {
 }
 
 function applyDesign(d) {
-  d.vspeeds = d.vspeeds || { ...APP.ASI_PRESETS.mph };
+  d.vspeeds = d.vspeeds || { ...APP.ASI_PRESETS.kt };
+  d.mission = d.mission || APP.DEFAULT_MISSION;
+  d.architecture = d.architecture || APP.MISSION_BY_ID[d.mission].arch;
   $('#design-name').value = d.name;
   $('#design-notes').value = d.notes || '';
   fillVspeedsUI(d.vspeeds);
@@ -412,6 +511,9 @@ function newDesign() {
 function duplicateDesign() {
   const copy = blankDesign(collectInto(current).name + ' copy');
   copy.notes = current.notes;
+  copy.vspeeds = { ...current.vspeeds };
+  copy.mission = current.mission;
+  copy.architecture = current.architecture;
   copy.instruments = JSON.parse(JSON.stringify(current.instruments));
   current = repo.upsert(copy);
   repo.setActiveId(current.id);

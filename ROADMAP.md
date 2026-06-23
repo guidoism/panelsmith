@@ -15,6 +15,12 @@ reflects dependency and value, not a schedule.
   / 450 / 470, Dynon SkyView HDX 10″ / 7″.
 - V-speed-driven ASI colour arcs, stored per design.
 - Live **weight total** and **current-draw (amps) total**, per-item and running.
+- Per-instrument **bus assignment** (Main · E-bus · Battery · Avionics) with per-bus
+  weight/amps sub-totals.
+- **Mission tab**: pick a profile (Day VFR → Full IFR), get a recommended Nuckolls
+  **Z-figure** architecture, and check the placed panel against the mission's
+  required/recommended equipment live (green / amber / red), plus an architecture-fit
+  check. Stored per design.
 - localStorage designs, JSON import/export, PNG export.
 
 ## The through-line
@@ -51,7 +57,7 @@ New instrument categories: toggle/rocker switches, circuit breakers, busbars, pl
 rounds and additional radios. Needed both for completeness and because you have to be able
 to *draw* the electrical system before you can design it.
 
-### 3. Architecture picker + endurance calc + principle checks — `M`
+### 3. Architecture picker + endurance calc + principle checks — `M` *(picker + checks shipped; endurance calc remains)*
 
 Choose a power-system architecture based on Nuckolls' "Z-figures":
 
@@ -61,18 +67,23 @@ Choose a power-system architecture based on Nuckolls' "Z-figures":
 - **Z-14** — dual battery / dual alternator with cross-feed; full redundancy.
 
 The architecture defines the power sources and which buses survive an alternator failure.
-Combined with the per-bus loads from #1, compute **battery-only endurance**. Encode the
-book's rules as pass/fail checks (e.g. "E-bus load light enough for useful endurance,"
-"every source has overcurrent protection") and **cite** the relevant Z-figure/chapter
-rather than reproducing the text — same respect-the-source stance as principle 8.
+The **picker and the live principle checks shipped** (see `js/missions.js` —
+`ARCHITECTURES` + `evaluateMission`, surfaced on the Mission tab). What **remains** is the
+quantitative **battery-only endurance**: combine the per-bus E-bus load from #1 with a
+battery capacity (Ah) to show "≈ X minutes on the battery after an alternator failure,"
+and add the remaining source-level checks (e.g. "every source has overcurrent
+protection"). **Cite** the relevant Z-figure/chapter rather than reproducing the text —
+same respect-the-source stance as principle 8.
 
 > Verify exact Z-figure numbers and rules against a current revision of the book before
-> encoding them.
+> encoding them. The shipped blurbs describe Z-11 / Z-13/8 / Z-14 at a high level only.
 
-### 4. Missions as requirement profiles — `M`
+### 4. Missions as requirement profiles — `M` *(shipped — endurance minimum pending #3's calc)*
 
-Each mission is a required-equipment set plus a minimum battery endurance, checked live
-against the panel (green/red checklist):
+Each mission is a required-equipment set (and, once #3's endurance calc lands, a minimum
+battery endurance), checked live against the panel on the **Mission tab** — a green /
+amber / red checklist that distinguishes hard requirements from recommendations and also
+flags whether the chosen architecture fits. The five shipped profiles:
 
 1. **Day VFR, away from Class B** — minimal: ASI/ALT/compass, one com.
 2. **Day VFR near big cities** — adds ADS-B Out transponder, nav.

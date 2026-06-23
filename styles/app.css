@@ -10,6 +10,8 @@
   --accent: #4aa8ff;
   --accent-dim: #2b6fb0;
   --danger: #ff6b6b;
+  --ok: #36c46a;
+  --warn: #e7c93b;
   --stage-bg: #11151c;
   --panel-stroke: #cdd6e0;
   --radius: 8px;
@@ -257,6 +259,36 @@ body { display: flex; flex-direction: column; }
 .bus-row .b-load { color: var(--text); white-space: nowrap; font-size: 11px; }
 .bus-hint { margin: 9px 0 0; font-size: 9.5px; color: var(--text-mute); line-height: 1.5; }
 .bus-select { width: 100%; margin-bottom: 8px; }
+
+/* ---------- Inspector tabs ---------- */
+.insp-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.insp-tab {
+  flex: 1 1 0; padding: 5px 6px; cursor: pointer;
+  background: transparent; color: var(--text-mute);
+  border: 1px solid var(--line-soft); border-radius: var(--radius-sm);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+  font-family: inherit; transition: color .12s, border-color .12s, background .12s;
+}
+.insp-tab:hover { color: var(--text-dim); }
+.insp-tab.active { color: var(--accent); border-color: var(--accent-dim); background: rgba(74,168,255,.08); }
+.tab-body { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+/* ---------- Mission compliance ---------- */
+.check-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.check-row {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 5px 2px; border-bottom: 1px solid var(--line-soft); font-size: 12px;
+}
+.check-row:last-child { border-bottom: none; }
+.check-row .ck { flex: 0 0 14px; text-align: center; font-weight: 700; }
+.check-row.ok   .ck { color: var(--ok); }
+.check-row.warn .ck { color: var(--warn); }
+.check-row.fail .ck { color: var(--danger); }
+.check-row .ck-body { flex: 1 1 auto; min-width: 0; }
+.check-row .ck-label { color: var(--text-dim); }
+.check-row.ok .ck-label { color: var(--text); }
+.check-row .ck-detail { display: block; color: var(--text-mute); font-size: 9.5px; line-height: 1.4; }
+.check-row.arch { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 7px; }
 .sel-text-input { width: 100%; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.3px; }
 
 .selection-name { font-weight: 600; margin-bottom: 4px; color: var(--text); }
