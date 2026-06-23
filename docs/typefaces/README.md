@@ -1,0 +1,39 @@
+# Aircraft typefaces — reference
+
+[`aircraft-typeface-specimen.pdf`](aircraft-typeface-specimen.pdf) is a one-page specimen
+comparing the four typographic lineages used on aircraft placards and instruments. It's a
+design reference for choosing authentic fonts for Panelsmith's labels and glass-display
+text (today the app renders labels in Arial).
+
+## The four lineages
+
+1. **Modern glass-cockpit screen — B612.** Designed by Airbus + ENAC / Université de
+   Toulouse for cockpit *displays* (legibility under glare and vibration), open-sourced in
+   2017. Shown with its `B612 Mono` companion.
+2. **U.S. military instrument panels — MIL-M-18012** (now SAE AS18012). The standard names
+   **Gorton** for engraving and **Futura Demibold / News Gothic** for
+   printed/silk-screened markings. The specimen shows News Gothic.
+3. **WWII-era aircraft lettering — “Spartan.”** The 1940s RAF panel/placard letterforms, a
+   geometric relative of Renner's Futura. U.S. exterior *data blocks* used slanted stencil
+   forms (USAAF ~45° “Amarillo”, USN ~30° “LongBeach”).
+4. **RAF 851ATH & modern GA silk-screen — condensed grotesque** (≈ Helvetica Medium
+   Condensed). The look homebuilt/GA shops cut for placards and engraved strips today.
+
+**Note:** **Gorton**, the classic engraved-panel face, is proprietary with no clean free
+version, so it isn't shown.
+
+## Fonts used in the specimen & licensing
+
+The PDF embeds subsets of each face for display only:
+
+| Shown as | Font file | License |
+|----------|-----------|---------|
+| B612 / B612 Mono | B612 (Airbus / PolarSys) | SIL Open Font License |
+| Spartan | League Spartan | SIL Open Font License |
+| News Gothic | News Gothic (Linotype) | Commercial — author's licensed copy; **not** redistributed as a font file |
+| Trade Gothic Cond | Trade Gothic (Linotype) | Commercial — author's licensed copy; **not** redistributed as a font file |
+
+Only the OFL faces are freely redistributable. The commercial faces appear as embedded PDF
+subsets (standard for document distribution), not as installable font files. If a fully
+OFL-only version is ever needed, News Gothic / Trade Gothic can be swapped for open
+gothics (e.g. a libre News-Gothic-like and a libre condensed grotesque).
