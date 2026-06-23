@@ -1,0 +1,29 @@
+Gorton Digital — license & attribution
+=======================================
+
+Font: "Gorton Digital", a digital revival of the early/mid-20th-century George
+Gorton Machine Co. engraving alphabet.
+
+Author: R. S. Bartgis ("drdnar")
+Source: https://github.com/drdnar/GortonDigital
+
+LICENSE (as stated by the author):
+
+    "These typefaces are free to use for non-commercial purposes."
+
+    Commercial use requires a license (fees directed to a US-based educational
+    non-profit). Contact the author at rsbartgis@gmail.com for commercial
+    licensing.
+
+>>> NON-COMMERCIAL ONLY. <<<
+This font is bundled in Panelsmith (subsetted + base64-embedded in
+js/font-data.js) for the "Gorton (engraved)" placard option. Panelsmith itself
+is a non-commercial hobby project, which is why this is OK here.
+
+If you FORK Panelsmith for any COMMERCIAL purpose, you must remove Gorton —
+delete the 'Gorton' @font-face from js/font-data.js and the 'gorton' entry from
+APP.FONTS — or obtain a commercial license from the author. The rest of
+Panelsmith is MIT; this single asset is the exception.
+
+Modification note: only the horizontal metrics were adjusted (right sidebearings
+tightened for even spacing). No glyph outlines were altered.

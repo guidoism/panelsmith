@@ -4,6 +4,10 @@ Panelsmith renders instrument text in **B612** and **B612 Mono** — the open-so
 family Airbus + ENAC designed for aircraft cockpit displays (see
 [`docs/typefaces/`](../docs/typefaces/) for the specimen and background).
 
+**Placards** additionally offer a font picker: B612, **Barlow Semi Condensed** (a
+condensed gothic), **League Spartan** (geometric), and **Gorton** (the engraved-panel look
+— see the non-commercial note below).
+
 ## How they're shipped
 
 The fonts are **subsetted** (Basic Latin + the few symbols the instruments use: `° · × –
@@ -16,15 +20,23 @@ This is deliberate, for two reasons:
 2. **`file://`.** Embedding keeps the app self-contained, so it still works by
    double-clicking `index.html` with no server and no external font requests.
 
-Total embedded cost is ~27 KB (three subsetted woff2 faces). No CDN, no network, no
+Total embedded cost is ~58 KB base64 (six subsetted woff2 faces). No CDN, no network, no
 tracking.
 
 ## License
 
-B612 is licensed under the **SIL Open Font License 1.1** — see
-[`OFL-B612.txt`](OFL-B612.txt). It does **not** declare a Reserved Font Name, so the
-subsetted faces keep the name "B612". Copyright 2012 The B612 Project Authors,
-<https://github.com/polarsys/b612>.
+- **B612 / B612 Mono** — **SIL Open Font License 1.1** ([`OFL-B612.txt`](OFL-B612.txt)).
+  No Reserved Font Name, so the subset keeps the name "B612". © 2012 The B612 Project
+  Authors, <https://github.com/polarsys/b612>.
+- **League Spartan** and **Barlow Semi Condensed** — **SIL Open Font License 1.1** (from
+  Google Fonts). Freely redistributable.
+- **Gorton** — ⚠ **NON-COMMERCIAL ONLY** ([`GORTON-LICENSE.txt`](GORTON-LICENSE.txt)). The
+  drdnar "Gorton Digital" revival is free for non-commercial use; commercial use needs a
+  license from the author. It's bundled because Panelsmith is a non-commercial hobby
+  project. **If you fork Panelsmith for commercial use, remove Gorton** (its `@font-face`
+  in `js/font-data.js` and the `gorton` entry in `APP.FONTS`) or license it. Everything
+  else here is OFL/MIT-clean; Gorton is the one exception. Only its metrics were tightened
+  (sidebearings), no glyphs changed.
 
 ## Regenerating
 
