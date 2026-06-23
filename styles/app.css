@@ -272,6 +272,7 @@ body { display: flex; flex-direction: column; }
 .insp-tab:hover { color: var(--text-dim); }
 .insp-tab.active { color: var(--accent); border-color: var(--accent-dim); background: rgba(74,168,255,.08); }
 .tab-body { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.tab-body[hidden] { display: none; }   /* class selector above beats UA [hidden]; restore it */
 
 /* ---------- Mission compliance ---------- */
 .check-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
@@ -302,7 +303,7 @@ body { display: flex; flex-direction: column; }
 .coord-input { width: 100%; }
 .sel-actions { display: flex; flex-wrap: wrap; gap: 6px; }
 
-.designs-list { list-style: none; margin: 8px 0 0; padding: 0; overflow-y: auto; flex: 1 1 auto; }
+.designs-list { list-style: none; margin: 8px 0 0; padding: 0; overflow-y: auto; flex: 1 1 auto; min-height: 84px; }
 .design-row {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: var(--radius-sm);
