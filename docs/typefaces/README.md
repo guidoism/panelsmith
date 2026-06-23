@@ -5,6 +5,9 @@ comparing the four typographic lineages used on aircraft placards and instrument
 design reference for choosing authentic fonts for Panelsmith's labels and glass-display
 text (today the app renders labels in Arial).
 
+The file is **PDF/A-2b** (archival) — every font is embedded and an sRGB OutputIntent is
+included, so it renders identically on any computer, now and in the future.
+
 ## The four lineages
 
 1. **Modern glass-cockpit screen — B612.** Designed by Airbus + ENAC / Université de
