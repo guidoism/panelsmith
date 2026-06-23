@@ -95,7 +95,7 @@ function hub(r = 2.4) {
 }
 
 function title(text, y, size = 4.6) {
-  return `<text x="0" y="${y}" text-anchor="middle" font-size="${size}" fill="#8d959d" font-family="Helvetica, Arial, sans-serif" letter-spacing="0.4">${text}</text>`;
+  return `<text x="0" y="${y}" text-anchor="middle" font-size="${size}" fill="#8d959d" font-family="'B612', sans-serif" letter-spacing="0.4">${text}</text>`;
 }
 
 function dialClip(inner) {
@@ -113,8 +113,8 @@ function attitude() {
     const y = -p * pitch, half = p % 20 === 0 ? 9 : 5;
     ladder.push(`<line x1="${-half}" y1="${y}" x2="${half}" y2="${y}" stroke="#fff" stroke-width="0.6"/>`);
     if (p % 20 === 0) {
-      ladder.push(`<text x="${-half-2.5}" y="${y+1.4}" text-anchor="end" font-size="3.6" fill="#fff" font-family="Arial">${Math.abs(p)}</text>`);
-      ladder.push(`<text x="${half+2.5}" y="${y+1.4}" font-size="3.6" fill="#fff" font-family="Arial">${Math.abs(p)}</text>`);
+      ladder.push(`<text x="${-half-2.5}" y="${y+1.4}" text-anchor="end" font-size="3.6" fill="#fff" font-family="'B612', sans-serif">${Math.abs(p)}</text>`);
+      ladder.push(`<text x="${half+2.5}" y="${y+1.4}" font-size="3.6" fill="#fff" font-family="'B612', sans-serif">${Math.abs(p)}</text>`);
     }
   }
   // bank scale ticks around the top
@@ -147,7 +147,7 @@ function attitude() {
     <!-- OFF flag -->
     <g transform="translate(20 -16)">
       <rect x="-4.5" y="-3" width="9" height="6" rx="0.8" fill="#c62828" stroke="#7a1414" stroke-width="0.3"/>
-      <text x="0" y="1.6" text-anchor="middle" font-size="3.6" fill="#fff" font-family="Arial" font-weight="bold">OFF</text>
+      <text x="0" y="1.6" text-anchor="middle" font-size="3.6" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">OFF</text>
     </g>
     ${glass()}
     <!-- adjustment knob, bottom centre on bezel -->
@@ -186,7 +186,7 @@ function airspeed() {
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e9edf0" stroke-width="${major?0.9:0.5}"/>`);
     if (major) {
       const [nx, ny] = pol(26.5, a);
-      nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5.4" fill="#fff" font-family="Arial" font-weight="bold">${v}</text>`);
+      nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5.4" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${v}</text>`);
     }
   }
   const band = (r, v0, v1, color, w) =>
@@ -224,7 +224,7 @@ function altimeter() {
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
     if (major) {
       const [nx, ny] = pol(25.5, a);
-      nums.push(`<text x="${nx}" y="${ny+2.2}" text-anchor="middle" font-size="6" fill="#fff" font-family="Arial" font-weight="bold">${i/5}</text>`);
+      nums.push(`<text x="${nx}" y="${ny+2.2}" text-anchor="middle" font-size="6" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${i/5}</text>`);
     }
   }
   return `<g>
@@ -238,7 +238,7 @@ function altimeter() {
     <!-- Kollsman window -->
     <g transform="translate(24 0)">
       <rect x="-7" y="-3.2" width="14" height="6.4" rx="0.8" fill="#0c0c0e" stroke="#5a5d63" stroke-width="0.4"/>
-      <text x="0" y="2" text-anchor="middle" font-size="4" fill="#e9edf0" font-family="Arial">29.92</text>
+      <text x="0" y="2" text-anchor="middle" font-size="4" fill="#e9edf0" font-family="'B612', sans-serif">29.92</text>
     </g>
     <!-- 10000 ft pointer (thin, triangle tip) -->
     <g transform="rotate(0)">
@@ -272,7 +272,7 @@ function dg() {
       const [tx, ty] = pol(26, h);
       const lab = cardinals[h] ?? (h / 10);
       const size = cardinals[h] ? 6 : 4.6;
-      labels.push(`<g transform="translate(${tx} ${ty}) rotate(${h})"><text y="2" text-anchor="middle" font-size="${size}" fill="${cardinals[h]?'#ffd23a':'#fff'}" font-family="Arial" font-weight="bold">${lab}</text></g>`);
+      labels.push(`<g transform="translate(${tx} ${ty}) rotate(${h})"><text y="2" text-anchor="middle" font-size="${size}" fill="${cardinals[h]?'#ffd23a':'#fff'}" font-family="'B612', sans-serif" font-weight="bold">${lab}</text></g>`);
     }
   }
   return `<g>
@@ -307,7 +307,7 @@ function vsi() {
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
     if (major && v % 10 === 0) {
       const [nx, ny] = pol(26, a);
-      nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5.4" fill="#fff" font-family="Arial" font-weight="bold">${Math.abs(v/10)}</text>`);
+      nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5.4" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${Math.abs(v/10)}</text>`);
     }
   }
   return `<g>
@@ -339,8 +339,8 @@ function turn() {
       return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="0.7"/>
               <line x1="${x3}" y1="${y3}" x2="${x4}" y2="${y4}" stroke="#fff" stroke-width="0.7"/>`;
     }).join('')}
-    <text x="-26" y="-6" text-anchor="middle" font-size="4.4" fill="#fff" font-family="Arial">L</text>
-    <text x="26" y="-6" text-anchor="middle" font-size="4.4" fill="#fff" font-family="Arial">R</text>
+    <text x="-26" y="-6" text-anchor="middle" font-size="4.4" fill="#fff" font-family="'B612', sans-serif">L</text>
+    <text x="26" y="-6" text-anchor="middle" font-size="4.4" fill="#fff" font-family="'B612', sans-serif">R</text>
     <!-- miniature airplane (wings level) -->
     <g fill="#f0f3f6" stroke="#9aa0a6" stroke-width="0.2">
       <rect x="-20" y="-1" width="40" height="2" rx="1"/>
@@ -379,8 +379,8 @@ function lri() {
     ${seg(-12,40,'#1faa4b')}
     ${seg(40,78,'#2f7fc4')}
     ${ticks}
-    <text x="0" y="-2.5" text-anchor="middle" font-size="3.6" fill="#9aa0a6" font-family="Arial">LIFT</text>
-    <text x="0" y="2.2" text-anchor="middle" font-size="2.7" fill="#6b7178" font-family="Arial">RESERVE</text>
+    <text x="0" y="-2.5" text-anchor="middle" font-size="3.6" fill="#9aa0a6" font-family="'B612', sans-serif">LIFT</text>
+    <text x="0" y="2.2" text-anchor="middle" font-size="2.7" fill="#6b7178" font-family="'B612', sans-serif">RESERVE</text>
     <g><path d="M -1 3 L -0.4 ${-(r+1)} L 0.4 ${-(r+1)} L 1 3 Z" fill="#f4f6f8"/></g>
     ${hub(1.8)}
     ${glass(SZ)}
@@ -408,7 +408,7 @@ function aoaEagle() {
     <circle cx="0" cy="2" r="5.2" fill="none" stroke="#1faa4b" stroke-width="3" opacity="0.85"/>
     ${chev(16,'#2f7fc4',-1,false)}
     ${chev(25,'#2f7fc4',-1,false)}
-    <text x="0" y="${h/2-3}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="Arial" letter-spacing="0.5">AOA</text>
+    <text x="0" y="${h/2-3}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="'B612', sans-serif" letter-spacing="0.5">AOA</text>
   `);
 }
 
@@ -426,7 +426,7 @@ function aoaLadder() {
       <line x1="${bx}" y1="${top+39}" x2="${bx+bw}" y2="${top+39}"/>
     </g>
     <path d="M ${bx-1.5} ${top+29} l -5 -4 l 0 8 z" fill="#fff"/>
-    <text x="-5.5" y="${h/2-4}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="Arial">AOA</text>
+    <text x="-5.5" y="${h/2-4}" text-anchor="middle" font-size="3" fill="#5a5d63" font-family="'B612', sans-serif">AOA</text>
   `);
 }
 
@@ -455,13 +455,13 @@ function pfd(x, y, w, h) {
     <rect x="${cx-1}" y="${cy-1}" width="2" height="2" fill="#ffb000"/>
     <rect x="${x}" y="${y}" width="${tapeW}" height="${h}" fill="#000" opacity="0.55"/>
     <rect x="${x+1}" y="${cy-4}" width="${tapeW-2}" height="8" fill="#11161c" stroke="#fff" stroke-width="0.4"/>
-    <text x="${x+tapeW/2}" y="${cy+1.5}" text-anchor="middle" font-size="3.4" fill="#fff" font-family="sans-serif">120</text>
+    <text x="${x+tapeW/2}" y="${cy+1.5}" text-anchor="middle" font-size="3.4" fill="#fff" font-family="'B612', sans-serif">120</text>
     <rect x="${x+w-tapeW}" y="${y}" width="${tapeW}" height="${h}" fill="#000" opacity="0.55"/>
     <rect x="${x+w-tapeW+1}" y="${cy-4}" width="${tapeW-2}" height="8" fill="#11161c" stroke="#fff" stroke-width="0.4"/>
-    <text x="${x+w-tapeW/2}" y="${cy+1.5}" text-anchor="middle" font-size="3.2" fill="#fff" font-family="sans-serif">3500</text>
+    <text x="${x+w-tapeW/2}" y="${cy+1.5}" text-anchor="middle" font-size="3.2" fill="#fff" font-family="'B612', sans-serif">3500</text>
     <circle cx="${cx}" cy="${y+h-h*0.17}" r="${h*0.13}" fill="#0c1118" stroke="#fff" stroke-width="0.4" opacity="0.92"/>
     <path d="M ${cx} ${y+h-h*0.17-h*0.11} l -2 5 l 4 0 z" fill="#ffb000"/>
-    <text x="${cx}" y="${y+h-h*0.17-h*0.135}" text-anchor="middle" font-size="3" fill="#0ad06a" font-family="sans-serif">N</text>
+    <text x="${cx}" y="${y+h-h*0.17-h*0.135}" text-anchor="middle" font-size="3" fill="#0ad06a" font-family="'B612', sans-serif">N</text>
   </g>`;
 }
 
@@ -476,7 +476,7 @@ function mfdMap(x, y, w, h) {
     <path d="M ${x+w*0.5} ${y+h} L ${x+w*0.5} ${y+h*0.55} L ${x+w*0.62} ${y+h*0.3}" fill="none" stroke="#d34de0" stroke-width="0.8" stroke-dasharray="2 1.5"/>
     <path d="M ${x+w*0.5} ${y+h*0.62} l -3 6 l 3 -2 l 3 2 z" fill="#fff"/>
     <rect x="${x+2}" y="${y+2}" width="14" height="6" fill="#000" opacity="0.5"/>
-    <text x="${x+4}" y="${y+6.4}" font-size="3" fill="#0ce0c0" font-family="sans-serif">MAP</text>
+    <text x="${x+4}" y="${y+6.4}" font-size="3" fill="#0ce0c0" font-family="'B612', sans-serif">MAP</text>
   </g>`;
 }
 
@@ -502,7 +502,7 @@ function gduLandscape(w, h, knobR, fs, brand = 'GARMIN') {
     <circle cx="${b.sx + kx}" cy="${b.knobY}" r="${knobR*0.55}" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
     <circle cx="${b.sx + w - kx}" cy="${b.knobY}" r="${knobR}" fill="#0c0c0d" stroke="#33363c" stroke-width="0.8"/>
     <circle cx="${b.sx + w - kx}" cy="${b.knobY}" r="${knobR*0.55}" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
-    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="${fs}" fill="#3a3d44" font-family="sans-serif" letter-spacing="1">${brand}</text>
+    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="${fs}" fill="#3a3d44" font-family="'B612', sans-serif" letter-spacing="1">${brand}</text>
   `;
 }
 
@@ -524,7 +524,7 @@ function gdu470() {
     <circle cx="${b.sx + 15}" cy="${b.knobY}" r="4.5" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
     <circle cx="${b.sx + w - 15}" cy="${b.knobY}" r="8" fill="#0c0c0d" stroke="#33363c" stroke-width="0.8"/>
     <circle cx="${b.sx + w - 15}" cy="${b.knobY}" r="4.5" fill="#1a1b1e" stroke="#33363c" stroke-width="0.6"/>
-    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="5" fill="#3a3d44" font-family="sans-serif" letter-spacing="1">GARMIN</text>
+    <text x="${b.sx + w/2}" y="${b.knobY + 3}" text-anchor="middle" font-size="5" fill="#3a3d44" font-family="'B612', sans-serif" letter-spacing="1">GARMIN</text>
   `;
 }
 
@@ -543,7 +543,7 @@ function efisRound(w, h, label) {
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
     ${pfd(X, Y, W, H)}
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#glassGloss)" pointer-events="none"/>
-    <text x="0" y="${sy+h-1.7}" text-anchor="middle" font-size="3.4" fill="#b9bfc5" font-family="Arial" font-weight="bold" letter-spacing="0.4">${label}</text>
+    <text x="0" y="${sy+h-1.7}" text-anchor="middle" font-size="3.4" fill="#b9bfc5" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="0.4">${label}</text>
   </g>`;
 }
 
@@ -563,8 +563,8 @@ function gtnTall(w, h) {
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#04130f"/>
     ${mfdMap(X, Y, W, H)}
     <rect x="${X}" y="${Y}" width="${W}" height="8" fill="#0a1713" opacity="0.9"/>
-    <text x="${X+3}" y="${Y+5.6}" font-size="3.4" fill="#19d27a" font-family="Arial" font-weight="bold">DIRECT-TO</text>
-    <text x="${X+W-3}" y="${Y+5.6}" text-anchor="end" font-size="3.4" fill="#19d27a" font-family="Arial">115 KT</text>
+    <text x="${X+3}" y="${Y+5.6}" font-size="3.4" fill="#19d27a" font-family="'B612', sans-serif" font-weight="bold">DIRECT-TO</text>
+    <text x="${X+W-3}" y="${Y+5.6}" text-anchor="end" font-size="3.4" fill="#19d27a" font-family="'B612', sans-serif">115 KT</text>
     <rect x="${sx+5}" y="${sy+h-knob+2.5}" width="11" height="${knob-5}" rx="1" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
     <rect x="${sx+18}" y="${sy+h-knob+2.5}" width="11" height="${knob-5}" rx="1" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
     <circle cx="${sx+w-9}" cy="${sy+h-knob/2-0.5}" r="${knob/2-1}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
@@ -597,7 +597,7 @@ function radioStrip(w, h, lines) {
   const fs = lines.length > 1 ? dispH*0.36 : dispH*0.56;
   const txt = lines.map((l, i) => {
     const y = lines.length === 1 ? sy+m+dispH*0.5+fs*0.36 : sy+m+dispH*(i+0.5)/lines.length+fs*0.34;
-    return `<text x="${sx+m+dispW/2}" y="${y}" text-anchor="middle" font-size="${fs}" fill="${l.c}" font-family="Consolas, monospace" font-weight="bold">${l.t}</text>`;
+    return `<text x="${sx+m+dispW/2}" y="${y}" text-anchor="middle" font-size="${fs}" fill="${l.c}" font-family="'B612 Mono', monospace" font-weight="bold">${l.t}</text>`;
   }).join('');
   const ctlX = sx+m+dispW+2.5, ctlW = w-(m+dispW)-m-9, nb = 4;
   const btns = Array.from({length: nb}, (_, i) =>
@@ -616,7 +616,7 @@ function audioPanel(w, h) {
   const n = labels.length, step = (w-2*m)/n, bw = step-1.2;
   const btns = labels.map((L, i) => `<g>
     <rect x="${sx+m+i*step}" y="${sy+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#13241b" stroke="#2f5a44" stroke-width="0.3"/>
-    <text x="${sx+m+i*step+bw/2}" y="${1.4}" text-anchor="middle" font-size="${h*0.2}" fill="#37c46a" font-family="Arial">${L}</text>
+    <text x="${sx+m+i*step+bw/2}" y="${1.4}" text-anchor="middle" font-size="${h*0.2}" fill="#37c46a" font-family="'B612', sans-serif">${L}</text>
   </g>`).join('');
   return `<g>${avHousing(w, h)}${btns}</g>`;
 }
@@ -632,9 +632,9 @@ function navSmall(w, h, opts = {}) {
     ${mfdMap(X, Y+bar, W, H-bar)}`;
   if (opts.topLabel) {
     inner += `<rect x="${X}" y="${Y}" width="${W}" height="${bar}" fill="#0a1713" opacity="0.95"/>
-      <text x="${X+2.5}" y="${Y+5}" font-size="3.6" fill="#19d27a" font-family="Arial" font-weight="bold">${opts.topLabel}</text>`;
+      <text x="${X+2.5}" y="${Y+5}" font-size="3.6" fill="#19d27a" font-family="'B612', sans-serif" font-weight="bold">${opts.topLabel}</text>`;
     if (opts.topRight)
-      inner += `<text x="${X+W-2.5}" y="${Y+5}" text-anchor="end" font-size="3.6" fill="${opts.topRightColor || '#7f868d'}" font-family="Arial">${opts.topRight}</text>`;
+      inner += `<text x="${X+W-2.5}" y="${Y+5}" text-anchor="end" font-size="3.6" fill="${opts.topRightColor || '#7f868d'}" font-family="'B612', sans-serif">${opts.topRight}</text>`;
   }
   const bx = X + W + 2.5, bw = knobZone - 5, kr = Math.min(h*0.32, 6.5);
   inner += `<rect x="${bx}" y="${Y}" width="${bw}" height="6" rx="0.8" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
@@ -651,7 +651,7 @@ function apController(w, h) {
   const n = labels.length, area = w-2*m-knobZone, step = area/n, bw = step-1.4;
   const btns = labels.map((L, i) => `<g>
     <rect x="${sx+m+i*step}" y="${sy+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
-    <text x="${sx+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="${Math.min(4, h*0.16)}" fill="#cdd2d7" font-family="Arial">${L}</text></g>`).join('');
+    <text x="${sx+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="${Math.min(4, h*0.16)}" fill="#cdd2d7" font-family="'B612', sans-serif">${L}</text></g>`).join('');
   const kr = Math.min(h*0.34, 8), kx = sx+w-m-knobZone/2;
   return `<g>${avHousing(w, h)}${btns}
     <circle cx="${kx}" cy="0" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
@@ -699,7 +699,7 @@ function splitRocker() {
     <rect x="-4.5" y="-7" width="9" height="15" rx="1.6" fill="#15171a" stroke="#000" stroke-width="0.5"/>
     <rect x="-3.3" y="-5.6" width="6.6" height="5.8" rx="1" fill="#b02a2a"/>
     <rect x="-3.3" y="0.6" width="6.6" height="5.8" rx="1" fill="#3a1416"/>
-    <text x="0" y="-8.4" text-anchor="middle" font-size="2.8" fill="#b9bfc5" font-family="Arial">${lab}</text></g>`;
+    <text x="0" y="-8.4" text-anchor="middle" font-size="2.8" fill="#b9bfc5" font-family="'B612', sans-serif">${lab}</text></g>`;
   return `<g>${selRect(w, h)}${one(-5.5, 'BAT')}${one(5.5, 'ALT')}</g>`;
 }
 
@@ -707,7 +707,7 @@ function splitRocker() {
 function magSwitch() {
   const sz = 30, r = 11;
   const labs = [['OFF', -100], ['L', -50], ['R', 0], ['BOTH', 50], ['START', 105]];
-  const txt = labs.map(([t, a]) => { const [x, y] = pol(r + 4, a); return `<text x="${x}" y="${y+1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="Arial">${t}</text>`; }).join('');
+  const txt = labs.map(([t, a]) => { const [x, y] = pol(r + 4, a); return `<text x="${x}" y="${y+1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="'B612', sans-serif">${t}</text>`; }).join('');
   const tk = labs.map(([, a]) => { const [x1, y1] = pol(r + 1.4, a), [x2, y2] = pol(r - 0.4, a); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9aa0a6" stroke-width="0.5"/>`; }).join('');
   return `<g>${selRect(sz, sz, sz/2)}
     <circle r="${r+3}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.6"/>
@@ -724,7 +724,7 @@ function pushButton(color = '#b02a2a', text = 'START') {
     <circle r="${r+1.4}" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.5"/>
     <circle r="${r}" fill="${color}" stroke="#000" stroke-width="0.4"/>
     <circle r="${r}" fill="url(#glassGloss)"/>
-    <text x="0" y="1.4" text-anchor="middle" font-size="3" fill="#fff" font-family="Arial" font-weight="bold">${text}</text></g>`;
+    <text x="0" y="1.4" text-anchor="middle" font-size="3" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${text}</text></g>`;
 }
 
 // Push-pull circuit breaker.
@@ -734,7 +734,7 @@ function breaker(rating = '5A') {
     <circle cy="-1" r="4.6" fill="url(#knobGrad)" stroke="#0a0a0b" stroke-width="0.5"/>
     <circle cy="-1" r="3" fill="#1a1c1f" stroke="#3a3d42" stroke-width="0.3"/>
     <rect x="-3" y="-2.2" width="6" height="2.4" rx="0.6" fill="#0e1013"/>
-    <text x="0" y="6.6" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="Arial">${rating}</text></g>`;
+    <text x="0" y="6.6" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="'B612', sans-serif">${rating}</text></g>`;
 }
 
 // Rotary dimmer / rheostat knob.
@@ -785,7 +785,7 @@ function annunciator() {
   const n = labs.length, step = (w - 4) / n;
   const cells = labs.map(([t, c], i) => `<g transform="translate(${-w/2+2+step*(i+0.5)} 0)">
     <rect x="${-step/2+1}" y="-6" width="${step-2}" height="12" rx="1.2" fill="#0e1013" stroke="#26282c" stroke-width="0.3"/>
-    <text x="0" y="1.6" text-anchor="middle" font-size="3.2" fill="${c}" font-family="Arial" font-weight="bold">${t}</text></g>`).join('');
+    <text x="0" y="1.6" text-anchor="middle" font-size="3.2" fill="${c}" font-family="'B612', sans-serif" font-weight="bold">${t}</text></g>`).join('');
   return `<g>${selRect(w, h)}<rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="2" fill="#15171a" stroke="#000" stroke-width="0.6"/>${cells}</g>`;
 }
 
@@ -795,7 +795,7 @@ function nNumberPlacard(text = 'N1234') {
   const fs = Math.max(4, Math.min(9, (w - 8) / (t.length * 0.66 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#0c0d0f" stroke="#3a3d42" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="2">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="2">${esc(t)}</text></g>`;
 }
 
 // Warning / instruction placard — editable text.
@@ -804,7 +804,7 @@ function placard(text = 'EXPERIMENTAL') {
   const fs = Math.max(3, Math.min(5.2, (w - 5) / (t.length * 0.6 || 1)));
   return `<g>${selRect(w, h)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.2" fill="#b02a2a" stroke="#5a1416" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#fff" font-family="Arial" font-weight="bold" letter-spacing="0.6">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#fff" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="0.6">${esc(t)}</text></g>`;
 }
 
 // Generic engraved label strip — editable text, for annotating switches/breakers.
@@ -813,7 +813,7 @@ function labelStrip(text = 'LABEL') {
   const fs = Math.max(3, Math.min(5.5, (w - 5) / (t.length * 0.62 || 1)));
   return `<g>${selRect(w, h, 1.5)}
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="1.5" fill="#16181c" stroke="#2a2c30" stroke-width="0.4"/>
-    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="Arial" font-weight="bold" letter-spacing="0.4">${esc(t)}</text></g>`;
+    <text x="0" y="${fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#e6edf3" font-family="'B612', sans-serif" font-weight="bold" letter-spacing="0.4">${esc(t)}</text></g>`;
 }
 
 const swToggle = () => toggleSwitch();
@@ -844,7 +844,7 @@ function manifold() {
     const major = v % 5 === 0, a = ang(v);
     const [x1, y1] = pol(37, a), [x2, y2] = pol(major ? 31 : 34, a);
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
-    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="Arial" font-weight="bold">${v}</text>`); }
+    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${v}</text>`); }
   }
   return `<g>${bezel()}
     <path d="${arc(28, ang(15), ang(30))}" fill="none" stroke="#1faa4b" stroke-width="2.4"/>
@@ -862,7 +862,7 @@ function tachometer() {
     const major = v % 5 === 0, a = ang(v);
     const [x1, y1] = pol(37, a), [x2, y2] = pol(major ? 31 : 34, a);
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="${major?0.9:0.45}"/>`);
-    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="Arial" font-weight="bold">${v/10}</text>`); }
+    if (major) { const [nx, ny] = pol(25, a); nums.push(`<text x="${nx}" y="${ny+2}" text-anchor="middle" font-size="5" fill="#fff" font-family="'B612', sans-serif" font-weight="bold">${v/10}</text>`); }
   }
   const [rx0, ry0] = pol(31, ang(27)), [rx1, ry1] = pol(37, ang(27));
   return `<g>${bezel()}
@@ -871,7 +871,7 @@ function tachometer() {
     ${ticks.join('')}${nums.join('')}
     ${title('RPM', -13, 4.2)}${title('× 100', 11, 3)}
     <g transform="translate(0 17)"><rect x="-10" y="-3" width="20" height="6" rx="0.8" fill="#0c0c0e" stroke="#5a5d63" stroke-width="0.3"/>
-      <text x="0" y="1.8" text-anchor="middle" font-size="3.6" fill="#e9edf0" font-family="Consolas, monospace">1234.5</text></g>
+      <text x="0" y="1.8" text-anchor="middle" font-size="3.6" fill="#e9edf0" font-family="'B612 Mono', monospace">1234.5</text></g>
     <g transform="rotate(${ang(24)})"><path d="M -1 3 L -0.5 -30 L 0.5 -30 L 1 3 Z" fill="#f4f6f8"/></g>
     ${hub(2.4)}${glass()}</g>`;
 }
@@ -885,12 +885,12 @@ function engineMon(w, h) {
     <rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="6" fill="url(#bezelFace)" stroke="#070708" stroke-width="0.8"/>
     ${screw(-o,-o)}${screw(o,-o)}${screw(-o,o)}${screw(o,o)}
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
-    <text x="${X+3}" y="${Y+13}" font-size="10" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">2400</text>
-    <text x="${X+3}" y="${Y+19}" font-size="3.2" fill="#9aa0a6" font-family="Arial">RPM</text>
-    <text x="${X+W-3}" y="${Y+12}" text-anchor="end" font-size="6.5" fill="#e9edf0" font-family="Consolas, monospace">28.4</text>
-    <text x="${X+W-3}" y="${Y+17}" text-anchor="end" font-size="3" fill="#9aa0a6" font-family="Arial">MAP</text>
+    <text x="${X+3}" y="${Y+13}" font-size="10" fill="#19d27a" font-family="'B612 Mono', monospace" font-weight="bold">2400</text>
+    <text x="${X+3}" y="${Y+19}" font-size="3.2" fill="#9aa0a6" font-family="'B612', sans-serif">RPM</text>
+    <text x="${X+W-3}" y="${Y+12}" text-anchor="end" font-size="6.5" fill="#e9edf0" font-family="'B612 Mono', monospace">28.4</text>
+    <text x="${X+W-3}" y="${Y+17}" text-anchor="end" font-size="3" fill="#9aa0a6" font-family="'B612', sans-serif">MAP</text>
     ${bars}
-    <text x="${X+2}" y="${Y+H-1.5}" font-size="3" fill="#6b7178" font-family="Arial" letter-spacing="1.5">EGT  CHT  FF  OIL</text>
+    <text x="${X+2}" y="${Y+H-1.5}" font-size="3" fill="#6b7178" font-family="'B612', sans-serif" letter-spacing="1.5">EGT  CHT  FF  OIL</text>
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#glassGloss)" pointer-events="none"/></g>`;
 }
 
@@ -901,12 +901,12 @@ function edmDisplay(w, h) {
   const colBars = [...Array(cols)].map((_, i) => {
     const bx = X+3+i*cw, bh = 14+((i*61)%20);
     return `<rect x="${bx}" y="${Y+H-4-bh}" width="${cw-1.5}" height="${bh}" fill="${i%2?'#e0552c':'#e7c93b'}"/>
-            <text x="${bx+(cw-1.5)/2}" y="${Y+H-1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="Arial">${i+1}</text>`;
+            <text x="${bx+(cw-1.5)/2}" y="${Y+H-1}" text-anchor="middle" font-size="2.6" fill="#9aa0a6" font-family="'B612', sans-serif">${i+1}</text>`;
   }).join('');
   const reads = [['RPM','2400','#19d27a'],['MAP','28.4','#e9edf0'],['OIL','185°','#e9edf0'],['FUEL','12.1','#19d27a']];
   const rd = reads.map(([l, v, c], i) => `<g transform="translate(${X+W*0.58} ${Y+6+i*((H-8)/4)})">
-    <text x="0" y="0" font-size="3" fill="#9aa0a6" font-family="Arial">${l}</text>
-    <text x="${W*0.4}" y="0" text-anchor="end" font-size="5" fill="${c}" font-family="Consolas, monospace" font-weight="bold">${v}</text></g>`).join('');
+    <text x="0" y="0" font-size="3" fill="#9aa0a6" font-family="'B612', sans-serif">${l}</text>
+    <text x="${W*0.4}" y="0" text-anchor="end" font-size="5" fill="${c}" font-family="'B612 Mono', monospace" font-weight="bold">${v}</text></g>`).join('');
   return `<g>${avHousing(w, h)}
     <rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="#05070a"/>
     ${colBars}${rd}
@@ -922,9 +922,9 @@ function davtronM803() {
   const SZ = 57;
   return `<g>${bezel('', SZ)}
     <rect x="-18" y="-8" width="36" height="13" rx="1.5" fill="#0a0c10" stroke="#1c2430" stroke-width="0.4"/>
-    <text x="0" y="2.4" text-anchor="middle" font-size="9" fill="#e0552c" font-family="Consolas, monospace" font-weight="bold">12:34</text>
-    <text x="-16" y="13.5" font-size="3.2" fill="#9aa0a6" font-family="Arial">15°C</text>
-    <text x="16" y="13.5" text-anchor="end" font-size="3.2" fill="#9aa0a6" font-family="Arial">13.8V</text>
+    <text x="0" y="2.4" text-anchor="middle" font-size="9" fill="#e0552c" font-family="'B612 Mono', monospace" font-weight="bold">12:34</text>
+    <text x="-16" y="13.5" font-size="3.2" fill="#9aa0a6" font-family="'B612', sans-serif">15°C</text>
+    <text x="16" y="13.5" text-anchor="end" font-size="3.2" fill="#9aa0a6" font-family="'B612', sans-serif">13.8V</text>
     ${glass(SZ)}</g>`;
 }
 
@@ -932,13 +932,13 @@ function davtronM803() {
 function coDetector() {
   const w = 57, h = 38, m = 2;
   return `<g>${avHousing(w, h)}
-    <text x="${-w/2+4}" y="-7" font-size="6" fill="#b9bfc5" font-family="Arial" font-weight="bold">CO</text>
-    <text x="${-w/2+4}" y="-1.5" font-size="2.8" fill="#6b7178" font-family="Arial">GUARDIAN</text>
+    <text x="${-w/2+4}" y="-7" font-size="6" fill="#b9bfc5" font-family="'B612', sans-serif" font-weight="bold">CO</text>
+    <text x="${-w/2+4}" y="-1.5" font-size="2.8" fill="#6b7178" font-family="'B612', sans-serif">GUARDIAN</text>
     <circle cx="${-w/2+5}" cy="8" r="2" fill="#1faa4b"/>
-    <text x="${-w/2+9}" y="9" font-size="2.8" fill="#6b7178" font-family="Arial">OK</text>
+    <text x="${-w/2+9}" y="9" font-size="2.8" fill="#6b7178" font-family="'B612', sans-serif">OK</text>
     <rect x="2" y="-9" width="${w/2-4}" height="16" rx="1.2" fill="#0a0c10" stroke="#1c2430" stroke-width="0.3"/>
-    <text x="${2+(w/2-4)/2}" y="-1" text-anchor="middle" font-size="7" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">000</text>
-    <text x="${2+(w/2-4)/2}" y="4.5" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="Arial">PPM</text></g>`;
+    <text x="${2+(w/2-4)/2}" y="-1" text-anchor="middle" font-size="7" fill="#19d27a" font-family="'B612 Mono', monospace" font-weight="bold">000</text>
+    <text x="${2+(w/2-4)/2}" y="4.5" text-anchor="middle" font-size="3" fill="#9aa0a6" font-family="'B612', sans-serif">PPM</text></g>`;
 }
 
 // Generic mechanical Hobbs hour meter.
@@ -946,18 +946,18 @@ function hobbsMeter() {
   const w = 42, h = 20, m = 2;
   const digits = '01234', tenth = '6';
   const dx = (i) => -16 + i * 6.2;
-  const drum = digits.split('').map((d, i) => `<rect x="${dx(i)-2.6}" y="-5" width="5.2" height="10" rx="0.6" fill="#101216" stroke="#2a2c30" stroke-width="0.3"/><text x="${dx(i)}" y="3" text-anchor="middle" font-size="6.4" fill="#e9edf0" font-family="Consolas, monospace">${d}</text>`).join('');
+  const drum = digits.split('').map((d, i) => `<rect x="${dx(i)-2.6}" y="-5" width="5.2" height="10" rx="0.6" fill="#101216" stroke="#2a2c30" stroke-width="0.3"/><text x="${dx(i)}" y="3" text-anchor="middle" font-size="6.4" fill="#e9edf0" font-family="'B612 Mono', monospace">${d}</text>`).join('');
   return `<g>${avHousing(w, h)}
     ${drum}
     <rect x="${dx(5)-2.6}" y="-5" width="5.2" height="10" rx="0.6" fill="#3a1416" stroke="#5a1416" stroke-width="0.3"/>
-    <text x="${dx(5)}" y="3" text-anchor="middle" font-size="6.4" fill="#ff6b6b" font-family="Consolas, monospace">${tenth}</text>
-    <text x="${w/2-2}" y="${h/2-1.5}" text-anchor="end" font-size="2.6" fill="#6b7178" font-family="Arial">HOBBS</text></g>`;
+    <text x="${dx(5)}" y="3" text-anchor="middle" font-size="6.4" fill="#ff6b6b" font-family="'B612 Mono', monospace">${tenth}</text>
+    <text x="${w/2-2}" y="${h/2-1.5}" text-anchor="end" font-size="2.6" fill="#6b7178" font-family="'B612', sans-serif">HOBBS</text></g>`;
 }
 
 // Generic whiskey (wet) compass.
 function compass() {
   const SZ = 57, r = 19;
-  const cards = [['N', 0], ['E', 90], ['S', 180], ['W', 270]].map(([t, a]) => { const [x, y] = pol(r, a); return `<text x="${x}" y="${y+2}" text-anchor="middle" font-size="${t==='N'?6:5}" fill="${t==='N'?'#ff6b6b':'#e9edf0'}" font-family="Arial" font-weight="bold">${t}</text>`; }).join('');
+  const cards = [['N', 0], ['E', 90], ['S', 180], ['W', 270]].map(([t, a]) => { const [x, y] = pol(r, a); return `<text x="${x}" y="${y+2}" text-anchor="middle" font-size="${t==='N'?6:5}" fill="${t==='N'?'#ff6b6b':'#e9edf0'}" font-family="'B612', sans-serif" font-weight="bold">${t}</text>`; }).join('');
   const minor = [30,60,120,150,210,240,300,330].map(a => { const [x, y] = pol(r, a); return `<circle cx="${x}" cy="${y}" r="0.9" fill="#9aa0a6"/>`; }).join('');
   return `<g>${bezel('', SZ)}
     <circle r="${r+4}" fill="#0a0c10" stroke="#26282c" stroke-width="0.5"/>
@@ -975,13 +975,13 @@ function gMeter() {
   for (let g = -4; g <= 8; g += 1) {
     const a = ang(g), [x1, y1] = pol(r, a), [x2, y2] = pol(r - 3, a);
     ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#0a0a0b" stroke-width="0.6"/>`);
-    const [nx, ny] = pol(r - 6, a); nums.push(`<text x="${nx}" y="${ny+1.5}" text-anchor="middle" font-size="3.4" fill="#0a0a0b" font-family="Arial" font-weight="bold">${g}</text>`);
+    const [nx, ny] = pol(r - 6, a); nums.push(`<text x="${nx}" y="${ny+1.5}" text-anchor="middle" font-size="3.4" fill="#0a0a0b" font-family="'B612', sans-serif" font-weight="bold">${g}</text>`);
   }
   return `<g>${bezel('', SZ)}
     <circle r="${r+3}" fill="#e9edf0"/>
     ${ticks.join('')}${nums.join('')}
-    <text x="0" y="-6" text-anchor="middle" font-size="3.4" fill="#3a3d42" font-family="Arial">G</text>
-    <text x="0" y="9" text-anchor="middle" font-size="2.4" fill="#6b7178" font-family="Arial">PUSH-RESET</text>
+    <text x="0" y="-6" text-anchor="middle" font-size="3.4" fill="#3a3d42" font-family="'B612', sans-serif">G</text>
+    <text x="0" y="9" text-anchor="middle" font-size="2.4" fill="#6b7178" font-family="'B612', sans-serif">PUSH-RESET</text>
     <g transform="rotate(${ang(1)})"><path d="M -0.9 4 L -0.4 ${-(r+1)} L 0.4 ${-(r+1)} L 0.9 4 Z" fill="#111"/></g>
     <circle r="1.6" fill="#3a3d42"/>
     ${glass(SZ)}</g>`;
@@ -995,10 +995,10 @@ function gMeter() {
 function trioProPilot() {
   return `<g>${bezel()}
     <rect x="-24" y="-15" width="48" height="16" rx="1.5" fill="#04130f" stroke="#0a1713" stroke-width="0.4"/>
-    <text x="-21" y="-8.5" font-size="3.8" fill="#19d27a" font-family="Consolas, monospace" font-weight="bold">NAV</text>
-    <text x="21" y="-8.5" text-anchor="end" font-size="3.8" fill="#19d27a" font-family="Consolas, monospace">5500</text>
-    <text x="0" y="-3" text-anchor="middle" font-size="3" fill="#7f868d" font-family="Arial">ALT HOLD</text>
-    <g>${['MODE','ALT'].map((t, i) => `<rect x="${-22+i*26}" y="5" width="18" height="7" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/><text x="${-22+i*26+9}" y="9.8" text-anchor="middle" font-size="3" fill="#cdd2d7" font-family="Arial">${t}</text>`).join('')}</g>
+    <text x="-21" y="-8.5" font-size="3.8" fill="#19d27a" font-family="'B612 Mono', monospace" font-weight="bold">NAV</text>
+    <text x="21" y="-8.5" text-anchor="end" font-size="3.8" fill="#19d27a" font-family="'B612 Mono', monospace">5500</text>
+    <text x="0" y="-3" text-anchor="middle" font-size="3" fill="#7f868d" font-family="'B612', sans-serif">ALT HOLD</text>
+    <g>${['MODE','ALT'].map((t, i) => `<rect x="${-22+i*26}" y="5" width="18" height="7" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/><text x="${-22+i*26+9}" y="9.8" text-anchor="middle" font-size="3" fill="#cdd2d7" font-family="'B612', sans-serif">${t}</text>`).join('')}</g>
     <circle cx="0" cy="22" r="7" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
     <circle cx="0" cy="22" r="3.4" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
     ${glass()}</g>`;
@@ -1010,7 +1010,7 @@ function dynonAP(w, h) {
   const knobZone = 16, n = labels.length, area = w-2*m-knobZone, step = area/n, bw = step-1.4;
   const btns = labels.map((L, i) => `<g>
     <rect x="${-w/2+m+i*step}" y="${-h/2+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
-    <text x="${-w/2+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="3.6" fill="#cdd2d7" font-family="Arial">${L}</text></g>`).join('');
+    <text x="${-w/2+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="3.6" fill="#cdd2d7" font-family="'B612', sans-serif">${L}</text></g>`).join('');
   const kr = Math.min(h*0.34, 8), kx = w/2-m-knobZone/2;
   return `<g>${avHousing(w, h)}${btns}
     <circle cx="${kx}" cy="0" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>

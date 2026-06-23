@@ -35,8 +35,11 @@ async function exportPNG(stage, name) {
   // remove any selection highlight from the export
   clone.querySelectorAll('.instrument.selected').forEach(n => n.classList.remove('selected'));
 
+  // Embed the @font-face rules (base64 fonts) INTO the SVG, because the SVG is
+  // rasterized via <img>, which can't see the page's webfonts — only fonts that
+  // ride along inside the SVG itself.
   const style = document.createElementNS(SVGNS, 'style');
-  style.textContent = EXPORT_CSS;
+  style.textContent = (APP.FONT_CSS || '') + EXPORT_CSS;
 
   const bg = document.createElementNS(SVGNS, 'rect');
   bg.setAttribute('x', vb.x); bg.setAttribute('y', vb.y);
@@ -47,7 +50,7 @@ async function exportPNG(stage, name) {
   title.setAttribute('x', P.x + P.w / 2);
   title.setAttribute('y', P.y - titleSpace / 2 + 4);
   title.setAttribute('text-anchor', 'middle');
-  title.setAttribute('font-family', 'sans-serif');
+  title.setAttribute('font-family', "'B612', sans-serif");
   title.setAttribute('font-size', '20');
   title.setAttribute('font-weight', '600');
   title.setAttribute('fill', '#14181f');
@@ -63,6 +66,10 @@ async function exportPNG(stage, name) {
 
   try {
     const img = await loadImage(url);
+    // Give the SVG-embedded @font-face a moment to decode before rasterizing,
+    // otherwise the first export can fall back to a default font.
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch {} }
+    await new Promise(r => setTimeout(r, 120));
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(vb.w * PX_PER_MM);
     canvas.height = Math.round(vb.h * PX_PER_MM);
