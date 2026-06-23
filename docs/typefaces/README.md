@@ -1,9 +1,10 @@
 # Aircraft typefaces — reference
 
-[`aircraft-typeface-specimen.pdf`](aircraft-typeface-specimen.pdf) is a one-page specimen
-comparing the four typographic lineages used on aircraft placards and instruments. It's a
-design reference for choosing authentic fonts for Panelsmith's labels and glass-display
-text (today the app renders labels in Arial).
+[`aircraft-typeface-specimen.pdf`](aircraft-typeface-specimen.pdf) is a two-page specimen:
+page 1 compares the four typographic lineages used on aircraft placards and instruments,
+page 2 contrasts engraved (Gorton) vs. printed (News Gothic) military-panel lettering.
+It's a design reference for choosing authentic fonts for Panelsmith's labels and
+glass-display text (today the app renders labels in Arial).
 
 The file is **PDF/A-2b** (archival) — every font is embedded and an sRGB OutputIntent is
 included, so it renders identically on any computer, now and in the future.
@@ -22,8 +23,11 @@ included, so it renders identically on any computer, now and in the future.
 4. **RAF 851ATH & modern GA silk-screen — condensed grotesque** (≈ Helvetica Medium
    Condensed). The look homebuilt/GA shops cut for placards and engraved strips today.
 
-**Note:** **Gorton**, the classic engraved-panel face, is proprietary with no clean free
-version, so it isn't shown.
+**Page 2 — engraved vs. printed:** a closer comparison of **Gorton** (the
+machine-engraving alphabet — constant-width monoline strokes a pantograph/CNC cutter can
+trace, the classic mid-century instrument-panel look) against **News Gothic** (a
+typographic printing face). Same words, two faces, so the process-driven difference is
+obvious.
 
 ## Fonts used in the specimen & licensing
 
@@ -35,6 +39,7 @@ The PDF embeds subsets of each face for display only:
 | Spartan | League Spartan | SIL Open Font License |
 | News Gothic | News Gothic (Linotype) | Commercial — author's licensed copy; **not** redistributed as a font file |
 | Trade Gothic Cond | Trade Gothic (Linotype) | Commercial — author's licensed copy; **not** redistributed as a font file |
+| Gorton | Gorton Digital ([drdnar](https://github.com/drdnar/GortonDigital)) | Free for **non-commercial** use; specimen subset only, **not** redistributed as a font file |
 
 Only the OFL faces are freely redistributable. The commercial faces appear as embedded PDF
 subsets (standard for document distribution), not as installable font files. If a fully
