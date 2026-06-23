@@ -99,8 +99,9 @@ master-alt / magneto switches, a starter button, circuit breakers, a dimmer knob
 ports, eyeball air vents, cabin heat/air controls, an annunciator cluster, and a custom
 **Label**, **N-number**, and **experimental** placard. Select a label or placard and type
 your own text in the inspector — handy for annotating switches and breakers — and pick its
-**font**: B612, a condensed gothic (Barlow Semi Condensed), Spartan, or Gorton (the
-engraved-panel look; see [`fonts/`](fonts/) for its non-commercial licensing).
+**font**: B612, News Cycle (a News Gothic revival), a condensed gothic (Barlow Semi
+Condensed), Spartan, or Gorton (the engraved-panel look; see [`fonts/`](fonts/) for its
+non-commercial licensing).
 
 Instrument text is set in **B612** — the open font Airbus + ENAC designed for cockpit
 displays — with B612 Mono for digital readouts. The fonts are subsetted and embedded (no

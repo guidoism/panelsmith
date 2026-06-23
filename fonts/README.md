@@ -4,9 +4,9 @@ Panelsmith renders instrument text in **B612** and **B612 Mono** — the open-so
 family Airbus + ENAC designed for aircraft cockpit displays (see
 [`docs/typefaces/`](../docs/typefaces/) for the specimen and background).
 
-**Placards** additionally offer a font picker: B612, **Barlow Semi Condensed** (a
-condensed gothic), **League Spartan** (geometric), and **Gorton** (the engraved-panel look
-— see the non-commercial note below).
+**Placards** additionally offer a font picker: B612, **News Cycle** (an OFL News Gothic
+revival), **Barlow Semi Condensed** (a condensed gothic), **League Spartan** (geometric),
+and **Gorton** (the engraved-panel look — see the non-commercial note below).
 
 ## How they're shipped
 
@@ -28,8 +28,10 @@ tracking.
 - **B612 / B612 Mono** — **SIL Open Font License 1.1** ([`OFL-B612.txt`](OFL-B612.txt)).
   No Reserved Font Name, so the subset keeps the name "B612". © 2012 The B612 Project
   Authors, <https://github.com/polarsys/b612>.
-- **League Spartan** and **Barlow Semi Condensed** — **SIL Open Font License 1.1** (from
-  Google Fonts). Freely redistributable.
+- **News Cycle**, **League Spartan**, and **Barlow Semi Condensed** — **SIL Open Font
+  License 1.1** (from Google Fonts). Freely redistributable. News Cycle is a News
+  Gothic–style revival; the genuine Linotype **News Gothic is commercial and is *not*
+  shipped** (only used locally as a kerning reference — see `tools/`).
 - **Gorton** — ⚠ **NON-COMMERCIAL ONLY** ([`GORTON-LICENSE.txt`](GORTON-LICENSE.txt)). The
   drdnar "Gorton Digital" revival is free for non-commercial use; commercial use needs a
   license from the author. It's bundled because Panelsmith is a non-commercial hobby
