@@ -664,18 +664,65 @@ function navSmall(w, h, opts = {}) {
   return `<g>${inner}</g>`;
 }
 
-// Autopilot mode controller (GMC 507) — row of mode keys + a command knob.
+// Autopilot mode controller (GMC 507 / GFC 500) — HDG and ALT knobs flanking a
+// two-row mode-key grid, with the UP/DN pitch thumbwheel on the right edge.
 function apController(w, h) {
-  const sx = -w/2, sy = -h/2, m = 2.5, knobZone = 15;
-  const labels = ['AP','FD','HDG','NAV','ALT','VS','VNV','LVL'];
-  const n = labels.length, area = w-2*m-knobZone, step = area/n, bw = step-1.4;
-  const btns = labels.map((L, i) => `<g>
-    <rect x="${sx+m+i*step}" y="${sy+m}" width="${bw}" height="${h-2*m}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
-    <text x="${sx+m+i*step+bw/2}" y="1" text-anchor="middle" font-size="${Math.min(4, h*0.16)}" fill="#cdd2d7" font-family="'B612', sans-serif">${L}</text></g>`).join('');
-  const kr = Math.min(h*0.34, 8), kx = sx+w-m-knobZone/2;
-  return `<g>${avHousing(w, h)}${btns}
-    <circle cx="${kx}" cy="0" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
-    <circle cx="${kx}" cy="0" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+  const sx = -w/2, sy = -h/2, m = 2.5;
+  const lZone = 18, altZone = 17, whZone = 8;
+  const lkx = sx + m + lZone/2;
+  const whx = sx + w - m - whZone/2;                  // UP/DN wheel, far right
+  const rkx = (sx + w - m - whZone - 1) - altZone/2;  // ALT knob
+  const bx0 = lkx + lZone/2 + 1;
+  const bxEnd = rkx - altZone/2 - 1;
+
+  // Two rows of backlit mode keys, centred vertically.
+  const rows = [['AP','FD','HDG','NAV','APR'], ['ALT','VS','VNV','LVL','GA']];
+  const cols = 5, gap = 2.2, rowGap = 3, bh = 16;
+  const bw = (bxEnd - bx0 - gap*(cols-1)) / cols;
+  const top = sy + (h - (2*bh + rowGap)) / 2;
+  const fs = Math.min(3.2, bw*0.42);
+  let keys = '';
+  rows.forEach((row, r) => {
+    const by = top + r*(bh + rowGap);
+    row.forEach((L, c) => {
+      const x = bx0 + c*(bw + gap);
+      keys += `<rect x="${x}" y="${by}" width="${bw}" height="${bh}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
+        <text x="${x+bw/2}" y="${by+bh/2+fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#cdd2d7" font-family="'B612', sans-serif">${L}</text>`;
+    });
+  });
+
+  // Concentric knurled knob with a caption beneath.
+  const knob = (cx, r, label) => {
+    let knurl = '';
+    for (let i = 0; i < 12; i++) {
+      const a = i * Math.PI / 6, co = Math.cos(a), si = Math.sin(a);
+      knurl += `<line x1="${cx+co*r*0.96}" y1="${si*r*0.96}" x2="${cx+co*r*0.78}" y2="${si*r*0.78}" stroke="#2a2c30" stroke-width="0.4"/>`;
+    }
+    return `<circle cx="${cx}" cy="0" r="${r}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
+      ${knurl}
+      <circle cx="${cx}" cy="0" r="${r*0.56}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+      <circle cx="${cx}" cy="0" r="${r*0.24}" fill="#17191d"/>
+      <text x="${cx}" y="${r+3}" text-anchor="middle" font-size="2.6" fill="#8d9298" font-family="'B612', sans-serif">${label}</text>`;
+  };
+  const kr = Math.min(h*0.30, 7.5);
+
+  // UP/DN pitch thumbwheel — tall knurled wheel on the right edge.
+  const whw = whZone - 2, whT = sy + m + 3, whH = h - 2*m - 6;
+  let grooves = '';
+  for (let i = 1; i < 7; i++) {
+    const y = whT + i*(whH/7);
+    grooves += `<line x1="${whx-whw/2}" y1="${y}" x2="${whx+whw/2}" y2="${y}" stroke="#1b1d21" stroke-width="0.5"/>`;
+  }
+  const wheel = `
+    <text x="${whx}" y="${sy+m+1.9}" text-anchor="middle" font-size="2.5" fill="#8d9298" font-family="'B612', sans-serif">UP</text>
+    <rect x="${whx-whw/2}" y="${whT}" width="${whw}" height="${whH}" rx="1.5" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+    ${grooves}
+    <text x="${whx}" y="${sy+h-m-0.5}" text-anchor="middle" font-size="2.5" fill="#8d9298" font-family="'B612', sans-serif">DN</text>`;
+
+  return `<g>${avHousing(w, h)}${keys}
+    ${knob(lkx, kr, 'HDG')}
+    ${knob(rkx, kr, 'ALT')}
+    ${wheel}
   </g>`;
 }
 
