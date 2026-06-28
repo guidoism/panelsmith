@@ -80,8 +80,9 @@ palette):
 
 - **Electronic Flight Instruments**: Garmin G5, Garmin GI 275, uAvionix AV-30-E.
 - **Nav / Comm / Transponder**: Garmin GTN 750Xi, GTN 650Xi, GPS 175, GNC 355 (GPS/com),
-  GNX 375 (GPS/transponder), GTR 205 (com), GTX 335 and GTX 345 (ADS-B) transponders, GMA
-  245 (audio) — at the real 6.25″ stack width.
+  GNX 375 (GPS/transponder); VHF radios — GTR 200 (experimental com), GTR 225 and GTR 205
+  (com), GNC 215 and GNC 255 (nav/com), plus the compact Trig TY91 (com); GTX 335 and GTX
+  345 (ADS-B) transponders, GMA 245 (audio) — at the real 6.25″ stack width.
 - **Autopilot**: Garmin GMC 507 mode controller (GFC 500), Trio Pro Pilot, Dynon
   SV-AP-PANEL.
 - **Engine & Fuel**: EI CGR-30P and JPI EDM-900 engine monitors (plus generic manifold

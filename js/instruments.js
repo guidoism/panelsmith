@@ -621,6 +621,25 @@ function audioPanel(w, h) {
   return `<g>${avHousing(w, h)}${btns}</g>`;
 }
 
+// Compact COM control head (Trig TC90 / TY91) — squarish unit that drops into a
+// 2¼″-class hole: active/standby freq display up top, dual knobs + flip-flop key
+// below.
+function comHead(w, h) {
+  const sx = -w/2, sy = -h/2, m = 2;
+  const dispW = w - 2*m, dispH = h*0.40, kr = h*0.16, ky = sy + h - h*0.26;
+  return `<g>
+    ${avHousing(w, h)}
+    <rect x="${sx+m}" y="${sy+m}" width="${dispW}" height="${dispH}" rx="1" fill="#04070a" stroke="#1c2430" stroke-width="0.3"/>
+    <text x="${sx+m+2}" y="${sy+m+dispH*0.62}" font-size="${dispH*0.5}" fill="#19d27a" font-family="'B612 Mono', monospace" font-weight="bold">118.00</text>
+    <text x="${sx+w-m-2}" y="${sy+m+dispH-1.4}" text-anchor="end" font-size="${dispH*0.32}" fill="#7f868d" font-family="'B612 Mono', monospace">121.50</text>
+    <circle cx="${sx+w*0.24}" cy="${ky}" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.5"/>
+    <circle cx="${sx+w*0.24}" cy="${ky}" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+    <rect x="${sx+w*0.42}" y="${ky-h*0.11}" width="${w*0.16}" height="${h*0.22}" rx="0.8" fill="#23262c" stroke="#34373d" stroke-width="0.3"/>
+    <circle cx="${sx+w*0.78}" cy="${ky}" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.5"/>
+    <circle cx="${sx+w*0.78}" cy="${ky}" r="${kr*0.5}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+  </g>`;
+}
+
 // Compact touchscreen navigator (GPS 175 / GNC 355 / GNX 375 family) — map
 // screen on the left, status bar on top, two buttons + a dual knob on the right.
 function navSmall(w, h, opts = {}) {
@@ -1040,6 +1059,11 @@ const gnx375  = () => navSmall(159, 51, { topLabel: 'XPDR 1200', topRight: 'ADS-
 const gtx335  = () => radioStrip(160, 43, [{ t: '1200', c: '#19d27a' }]);
 const gtx345  = () => radioStrip(160, 43, [{ t: '1200', c: '#19d27a' }, { t: 'ADS-B', c: '#7f868d' }]);
 const gtr205  = () => radioStrip(159, 34, [{ t: '118.00', c: '#19d27a' }, { t: '121.50', c: '#7f868d' }]);
+const gtr200  = () => radioStrip(159, 34, [{ t: '118.00', c: '#19d27a' }, { t: '121.50', c: '#7f868d' }]);
+const gtr225  = () => radioStrip(159, 42, [{ t: '118.00', c: '#19d27a' }, { t: '121.50', c: '#7f868d' }]);
+const gnc215  = () => radioStrip(159, 34, [{ t: 'C 118.00', c: '#19d27a' }, { t: 'N 113.00', c: '#4aa8ff' }]);
+const gnc255  = () => radioStrip(159, 42, [{ t: 'C 118.00', c: '#19d27a' }, { t: 'N 113.00', c: '#4aa8ff' }]);
+const ty91    = () => comHead(63, 44);
 const gma245  = () => audioPanel(159, 33);
 const gmc507  = () => apController(159, 53);
 
@@ -1057,6 +1081,11 @@ const L = {
   gtx335: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtx335promo.php',
   gtx345: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtx345.php',
   gtr205: 'https://www.aircraftspruce.com/catalog/avpages/garmin_gtr205.php',
+  gtr200: 'https://www.garmin.com/en-US/p/140495/',
+  gtr225: 'https://www.garmin.com/en-US/p/95158/',
+  gnc215: 'https://www.garmin.com/en-US/p/721525/',
+  gnc255: 'https://www.garmin.com/en-US/p/102764/',
+  ty91:   'https://www.aircraftspruce.com/catalog/avpages/ty91vhfradio.php',
   gma245: 'https://www.garmin.com/en-US/c/aviation/audio-panels-radios/',
   gmc507: 'https://www.aircraftspruce.com/catalog/avpages/garmin11-16219.php',
   hdx:    'https://www.aircraftspruce.com/catalog/avpages/dynonskyview-hdx.php',
@@ -1097,7 +1126,12 @@ const CATALOG = [
   { id: 'gps175', name: 'Garmin GPS 175',       category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 1.3, amps: 0.6, svg: gps175, link: L.gps175, vendor: 'Garmin' },
   { id: 'gnc355', name: 'Garmin GNC 355 (GPS/COM)', category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 3.3, amps: 1.0, svg: gnc355, link: L.gnc355, vendor: 'Garmin' },
   { id: 'gnx375', name: 'Garmin GNX 375 (GPS/XPDR)', category: 'Nav / Comm / Transponder', w: 159, h: 51, weight: 3.2, amps: 1.2, svg: gnx375, link: L.gnx375, vendor: SPRUCE },
+  { id: 'gnc215', name: 'Garmin GNC 215 (NAV/COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 2.3, amps: 1.5, svg: gnc215, link: L.gnc215, vendor: 'Garmin' },
+  { id: 'gnc255', name: 'Garmin GNC 255 (NAV/COM)', category: 'Nav / Comm / Transponder', w: 159, h: 42, weight: 3.0, amps: 1.6, svg: gnc255, link: L.gnc255, vendor: 'Garmin' },
   { id: 'gtr205', name: 'Garmin GTR 205 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.5, amps: 1.5, svg: gtr205, link: L.gtr205, vendor: SPRUCE },
+  { id: 'gtr200', name: 'Garmin GTR 200 (COM, experimental)', category: 'Nav / Comm / Transponder', w: 159, h: 34, weight: 1.3, amps: 1.2, svg: gtr200, link: L.gtr200, vendor: 'Garmin' },
+  { id: 'gtr225', name: 'Garmin GTR 225 (COM)', category: 'Nav / Comm / Transponder', w: 159, h: 42, weight: 2.3, amps: 1.5, svg: gtr225, link: L.gtr225, vendor: 'Garmin' },
+  { id: 'ty91',   name: 'Trig TY91 (COM)', category: 'Nav / Comm / Transponder', w: 63, h: 44, weight: 0.2, amps: 1.0, svg: ty91, link: L.ty91, vendor: SPRUCE },
   { id: 'gtx335', name: 'Garmin GTX 335 (XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 1.7, amps: 0.5, svg: gtx335, link: L.gtx335, vendor: SPRUCE },
   { id: 'gtx345', name: 'Garmin GTX 345 (ADS-B XPDR)', category: 'Nav / Comm / Transponder', w: 160, h: 43, weight: 2.9, amps: 0.5, svg: gtx345, link: L.gtx345, vendor: SPRUCE },
   { id: 'gma245', name: 'Garmin GMA 245 (Audio)', category: 'Nav / Comm / Transponder', w: 159, h: 33, weight: 1.0, amps: 0.3, svg: gma245, link: L.gma245, vendor: 'Garmin' },
