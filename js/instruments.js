@@ -664,65 +664,67 @@ function navSmall(w, h, opts = {}) {
   return `<g>${inner}</g>`;
 }
 
-// Autopilot mode controller (GMC 507 / GFC 500) — HDG and ALT knobs flanking a
-// two-row mode-key grid, with the UP/DN pitch thumbwheel on the right edge.
+// Autopilot mode controller (GMC 507 / GFC 500). Three labelled sections split
+// by dividers: HDG/TRK (PUSH SYNC knob + APR/NAV/HDG/TRK), centre (AP/LVL/FD/YD
+// + the DN/UP pitch thumbwheel), ALT SEL (IAS/VNAV/VS/ALT + PUSH SYNC knob).
 function apController(w, h) {
-  const sx = -w/2, sy = -h/2, m = 2.5;
-  const lZone = 18, altZone = 17, whZone = 8;
-  const lkx = sx + m + lZone/2;
-  const whx = sx + w - m - whZone/2;                  // UP/DN wheel, far right
-  const rkx = (sx + w - m - whZone - 1) - altZone/2;  // ALT knob
-  const bx0 = lkx + lZone/2 + 1;
-  const bxEnd = rkx - altZone/2 - 1;
+  const sx = -w/2, sy = -h/2;
+  const bw = 18, bh = 11, rx = 2, fs = 3.5;
+  const y1 = -12, y2 = -0.5, y3 = 11;            // three button rows
+  const xLA = -66, xLB = -44;                    // left: knob/HDG col, APR/NAV/TRK col
+  const xCA = -16, xCB = 2.5, cwx = 19.5;        // centre: AP/FD, LVL/YD, wheel
+  const xRA = 44, xRB = 66;                      // right: IAS/VNAV/VS col, ALT/knob col
+  const div1 = -29, div2 = 29, kcy = -11, kr = 6.5;
 
-  // Two rows of backlit mode keys, centred vertically.
-  const rows = [['AP','FD','HDG','NAV','APR'], ['ALT','VS','VNV','LVL','GA']];
-  const cols = 5, gap = 2.2, rowGap = 3, bh = 16;
-  const bw = (bxEnd - bx0 - gap*(cols-1)) / cols;
-  const top = sy + (h - (2*bh + rowGap)) / 2;
-  const fs = Math.min(3.2, bw*0.42);
-  let keys = '';
-  rows.forEach((row, r) => {
-    const by = top + r*(bh + rowGap);
-    row.forEach((L, c) => {
-      const x = bx0 + c*(bw + gap);
-      keys += `<rect x="${x}" y="${by}" width="${bw}" height="${bh}" rx="1" fill="#1a1d22" stroke="#34373d" stroke-width="0.3"/>
-        <text x="${x+bw/2}" y="${by+bh/2+fs*0.36}" text-anchor="middle" font-size="${fs}" fill="#cdd2d7" font-family="'B612', sans-serif">${L}</text>`;
-    });
-  });
+  const btn = (cx, cy, label, opt = {}) => {
+    const fill = opt.hl ? '#1ba6df' : '#1c1f24';
+    const stroke = opt.hl ? '#5cc6f2' : (opt.lite ? '#c9cdd2' : '#3a3e45');
+    const tcol = opt.hl ? '#ffffff' : '#d2d6db';
+    return `<rect x="${cx-bw/2}" y="${cy-bh/2}" width="${bw}" height="${bh}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="0.4"/>
+      <text x="${cx}" y="${cy+fs*0.36}" text-anchor="middle" font-size="${fs}" fill="${tcol}" font-family="'B612', sans-serif" font-weight="bold">${label}</text>`;
+  };
 
-  // Concentric knurled knob with a caption beneath.
-  const knob = (cx, r, label) => {
-    let knurl = '';
+  const knob = (cx) => {
+    let kn = '';
     for (let i = 0; i < 12; i++) {
       const a = i * Math.PI / 6, co = Math.cos(a), si = Math.sin(a);
-      knurl += `<line x1="${cx+co*r*0.96}" y1="${si*r*0.96}" x2="${cx+co*r*0.78}" y2="${si*r*0.78}" stroke="#2a2c30" stroke-width="0.4"/>`;
+      kn += `<line x1="${cx+co*kr*0.97}" y1="${kcy+si*kr*0.97}" x2="${cx+co*kr*0.8}" y2="${kcy+si*kr*0.8}" stroke="#2a2c30" stroke-width="0.4"/>`;
     }
-    return `<circle cx="${cx}" cy="0" r="${r}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>
-      ${knurl}
-      <circle cx="${cx}" cy="0" r="${r*0.56}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
-      <circle cx="${cx}" cy="0" r="${r*0.24}" fill="#17191d"/>
-      <text x="${cx}" y="${r+3}" text-anchor="middle" font-size="2.6" fill="#8d9298" font-family="'B612', sans-serif">${label}</text>`;
+    return `<circle cx="${cx}" cy="${kcy}" r="${kr}" fill="#0c0c0d" stroke="#34373d" stroke-width="0.6"/>${kn}
+      <circle cx="${cx}" cy="${kcy}" r="${kr*0.55}" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
+      <circle cx="${cx}" cy="${kcy}" r="${kr*0.22}" fill="#15171b"/>`;
   };
-  const kr = Math.min(h*0.30, 7.5);
 
-  // UP/DN pitch thumbwheel — tall knurled wheel on the right edge.
-  const whw = whZone - 2, whT = sy + m + 3, whH = h - 2*m - 6;
-  let grooves = '';
-  for (let i = 1; i < 7; i++) {
-    const y = whT + i*(whH/7);
-    grooves += `<line x1="${whx-whw/2}" y1="${y}" x2="${whx+whw/2}" y2="${y}" stroke="#1b1d21" stroke-width="0.5"/>`;
+  // DN/UP pitch thumbwheel + the double arrow to its left.
+  const whw = 9, whTop = -15, whH = 22, ax = 13.5;
+  let grv = '';
+  for (let i = 1; i < 8; i++) {
+    const yy = whTop + i*(whH/8);
+    grv += `<line x1="${cwx-whw/2}" y1="${yy}" x2="${cwx+whw/2}" y2="${yy}" stroke="#191b1f" stroke-width="0.5"/>`;
   }
   const wheel = `
-    <text x="${whx}" y="${sy+m+1.9}" text-anchor="middle" font-size="2.5" fill="#8d9298" font-family="'B612', sans-serif">UP</text>
-    <rect x="${whx-whw/2}" y="${whT}" width="${whw}" height="${whH}" rx="1.5" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>
-    ${grooves}
-    <text x="${whx}" y="${sy+h-m-0.5}" text-anchor="middle" font-size="2.5" fill="#8d9298" font-family="'B612', sans-serif">DN</text>`;
+    <text x="${cwx}" y="${whTop-1.5}" text-anchor="middle" font-size="2.6" fill="#aeb3b8" font-family="'B612', sans-serif">DN</text>
+    <rect x="${cwx-whw/2}" y="${whTop}" width="${whw}" height="${whH}" rx="2" fill="url(#knobGrad)" stroke="#34373d" stroke-width="0.4"/>${grv}
+    <text x="${cwx}" y="${whTop+whH+3.5}" text-anchor="middle" font-size="2.6" fill="#aeb3b8" font-family="'B612', sans-serif">UP</text>
+    <g stroke="#aeb3b8" stroke-width="0.5" fill="none">
+      <line x1="${ax}" y1="${whTop+2}" x2="${ax}" y2="${whTop+whH-2}"/>
+      <path d="M ${ax-1.4} ${whTop+3.4} L ${ax} ${whTop+1} L ${ax+1.4} ${whTop+3.4}"/>
+      <path d="M ${ax-1.4} ${whTop+whH-3.4} L ${ax} ${whTop+whH-1} L ${ax+1.4} ${whTop+whH-3.4}"/>
+    </g>`;
 
-  return `<g>${avHousing(w, h)}${keys}
-    ${knob(lkx, kr, 'HDG')}
-    ${knob(rkx, kr, 'ALT')}
+  const cap = (x, t) => `<text x="${x}" y="-20" text-anchor="middle" font-size="3" fill="#cfd3d8" font-family="'B612', sans-serif" font-weight="bold">${t}</text>`;
+  const sync = (x) => `<text x="${x}" y="0.8" text-anchor="middle" font-size="2.3" fill="#8b9096" font-family="'B612', sans-serif">PUSH SYNC</text>`;
+
+  return `<g>${avHousing(w, h)}
+    <line x1="${div1}" y1="${sy+3}" x2="${div1}" y2="${sy+h-3}" stroke="#2c2f35" stroke-width="0.6"/>
+    <line x1="${div2}" y1="${sy+3}" x2="${div2}" y2="${sy+h-3}" stroke="#2c2f35" stroke-width="0.6"/>
+    ${cap(-55, 'HDG/TRK')} ${cap(55, 'ALT SEL')}
+    ${knob(xLA)} ${sync(xLA)} ${knob(xRB)} ${sync(xRB)}
+    ${btn(xLB, y1, 'APR')} ${btn(xLB, y2, 'NAV')} ${btn(xLA, y3, 'HDG')} ${btn(xLB, y3, 'TRK')}
+    <circle cx="-6" cy="-20.5" r="2.1" fill="#15171b" stroke="#3a3e45" stroke-width="0.4"/>
+    ${btn(xCA, y1, 'AP', { lite: true })} ${btn(xCB, y1, 'LVL', { hl: true })} ${btn(xCA, y2, 'FD')} ${btn(xCB, y2, 'YD')}
     ${wheel}
+    ${btn(xRA, y1, 'IAS')} ${btn(xRA, y2, 'VNAV')} ${btn(xRA, y3, 'VS')} ${btn(xRB, y3, 'ALT')}
   </g>`;
 }
 
