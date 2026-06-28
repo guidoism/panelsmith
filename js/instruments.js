@@ -244,9 +244,10 @@ function altimeter() {
     <g transform="rotate(0)">
       <path d="M 0 4 L 0 -33 L -1.6 -29 L 0 -33 L 1.6 -29" fill="none" stroke="#cdd2d7" stroke-width="0.7"/>
     </g>
-    <!-- 1000 ft pointer (short, fat) -->
+    <!-- 1000 ft pointer (the fat, middle-length spade hand) -->
     <g transform="rotate(108)">
-      <path d="M -2 2 L -1.4 -19 L 0 -22 L 1.4 -19 L 2 2 Z" fill="#e9edf0"/>
+      <path d="M 0 -20.5 Q 3.2 -13 2.1 -4 L 1.6 2.5 L -1.6 2.5 L -2.1 -4 Q -3.2 -13 0 -20.5 Z"
+            fill="#f4f6f8" stroke="#b9bec3" stroke-width="0.2"/>
     </g>
     <!-- 100 ft pointer (long, slender) -->
     <g transform="rotate(36)">
